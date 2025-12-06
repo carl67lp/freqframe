@@ -1,1 +1,10 @@
-<p>weather-pane works!</p>
+<h2>Current Weather</h2>
+@if (weatherData$ | async; as weatherData) {
+  <div>
+    <p>Temperature: {{ weatherData.temperature }} °F</p>
+    <p>Humidity: {{ weatherData.humidity }} %</p>
+    <p>Wind Speed: {{ weatherData.windSpeed }}mph @ {{ weatherData.windDirection }}</p>
+  </div>
+} @else {
+  <p>Loading weather data...</p>
+}

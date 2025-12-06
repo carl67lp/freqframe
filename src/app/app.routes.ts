@@ -7,6 +7,11 @@ import { SolarPane } from './solar-pane/solar-pane';
 
 export const routes: Routes = [
     {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+    },
+    {
         path: 'dashboard',
         component: Dashboard
     },

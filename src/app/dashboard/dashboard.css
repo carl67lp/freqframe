@@ -1,11 +1,16 @@
 .dashboard-container {
+  /* fill the viewport and ignore outer max-width constraints */
+  position: fixed;
+  inset: 0; /* top:0; right:0; bottom:0; left:0 */
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   gap: 1rem;
-  height: 100vh;
   padding: 1rem;
   background-color: var(--form-element-background-color);
+  box-sizing: border-box;
+  width: 100vw;
+  max-width: none;
 }
 
 .dashboard-pane {
@@ -18,8 +23,11 @@
 
 @media (max-width: 768px) {
   .dashboard-container {
+    position: relative;
+    inset: auto;
     grid-template-columns: 1fr;
     grid-template-rows: auto;
+    width: 100%;
     height: auto;
   }
 }
