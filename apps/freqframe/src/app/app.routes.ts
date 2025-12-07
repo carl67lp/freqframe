@@ -4,6 +4,7 @@ import { WeatherPane } from './weather-pane/weather-pane';
 import { BandConditionsPane } from './band-conditions-pane/band-conditions-pane';
 import { QsoPane } from './qso-pane/qso-pane';
 import { SolarPane } from './solar-pane/solar-pane';
+import { CalendarPane } from './calendar-pane/calendar-pane';
 
 export const routes: Routes = [
     {
@@ -30,5 +31,9 @@ export const routes: Routes = [
     {
         path: 'solar-data',
         component: SolarPane
+    },
+    {
+        path: 'calendar',
+        component: CalendarPane
     }
 ];

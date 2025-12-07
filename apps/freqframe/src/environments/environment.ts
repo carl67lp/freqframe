@@ -12,7 +12,13 @@ export const environment = {
   solarApi: {
     baseUrl: 'https://services.swpc.noaa.gov/json/solar-indices/27-day-outlook.json'
   },
-  bandConditionsApi: {
-    baseUrl: 'https://www.hamqsl.com/solar.html'
-  }
+  calendars: [
+    {
+        id: 'carl',
+        name: 'Carl',
+        url: 'https://example.com/calendar.ics',
+        color: '#39a855ff',
+        enabled: true
+    }
+],
 };
