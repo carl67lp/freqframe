@@ -1,0 +1,37 @@
+<div class="weather-pane-content">
+  <h2>Weather</h2>
+
+  @if (weatherData$ | async; as weatherData) {
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Temperature</div>
+      <div class="stat-value">
+        {{ weatherData.temperature }}<span class="unit">°F</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Humidity</div>
+      <div class="stat-value">
+        {{ weatherData.humidity }}<span class="unit">%</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Wind Speed</div>
+      <div class="stat-value">
+        {{ weatherData.windSpeed }}<span class="unit">mph</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-label">Wind Direction</div>
+      <div class="stat-value">
+        {{ weatherData.windDirection }}<span class="unit">°</span>
+      </div>
+    </div>
+  </div>
+  } @else {
+  <p>Loading weather data...</p>
+  }
+</div>
