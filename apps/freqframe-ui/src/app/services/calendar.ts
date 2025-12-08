@@ -40,21 +40,21 @@ export interface CalendarFetchResult {
   providedIn: 'root',
 })
 export class CalendarService {
-  constructor(private http: HttpClient) {}
+  // constructor(private http: HttpClient) {}
 
-  // Observable that emits merged, sorted, upcoming events across all sources.
-  // Emits on initial load and whenever refresh occurs.
-  readonly events$: Observable<CalendarEvent[]>;
+  // // Observable that emits merged, sorted, upcoming events across all sources.
+  // // Emits on initial load and whenever refresh occurs.
+  // readonly events$: Observable<CalendarEvent[]>;
 
-  // Optional: per-source statuses for UI (errors, lastFetched)
-  readonly sourceStatus$: Observable<CalendarFetchResult[]>;
+  // // Optional: per-source statuses for UI (errors, lastFetched)
+  // readonly sourceStatus$: Observable<CalendarFetchResult[]>;
 
-  // Force an immediate refresh (returns a promise or observable for completion)
-  refresh(): Promise<void>;
+  // // Force an immediate refresh (returns a promise or observable for completion)
+  // refresh(): Promise<void>;
 
-  // Optionally expose last updated timestamp
-  readonly lastUpdated$: Observable<string | null>;
+  // // Optionally expose last updated timestamp
+  // readonly lastUpdated$: Observable<string | null>;
 
-  // Optionally: get raw events from a specific source (useful for debugging)
-  getRawCalendar(sourceId: string): Observable<unknown>;
+  // // Optionally: get raw events from a specific source (useful for debugging)
+  // getRawCalendar(sourceId: string): Observable<unknown>;
 }

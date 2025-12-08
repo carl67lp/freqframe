@@ -51,10 +51,10 @@
       "executor": "@angular/build:dev-server",
       "configurations": {
         "production": {
-          "buildTarget": "freqframe:build:production"
+          "buildTarget": "freqframe-ui:build:production"
         },
         "development": {
-          "buildTarget": "freqframe:build:development"
+          "buildTarget": "freqframe-ui:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -62,7 +62,7 @@
     "extract-i18n": {
       "executor": "@angular/build:extract-i18n",
       "options": {
-        "buildTarget": "freqframe:build"
+        "buildTarget": "freqframe-ui:build"
       }
     },
     "lint": {
@@ -80,7 +80,7 @@
       "continuous": true,
       "executor": "@nx/web:file-server",
       "options": {
-        "buildTarget": "freqframe:build",
+        "buildTarget": "freqframe-ui:build",
         "port": 4200,
         "staticFilePath": "dist/apps/freqframe-ui/browser",
         "spa": true
