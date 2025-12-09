@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CalendarController } from './calendar/calendar.controller';
 import { ConfigModule } from '@nestjs/config';
+import { CalendarService } from './services/calendar/calendar.service';
 import calendarsConfig from './config/calendars.config';
 
 @Module({
@@ -17,6 +18,6 @@ import calendarsConfig from './config/calendars.config';
     }),
   ],
   controllers: [AppController, CalendarController],
-  providers: [AppService],
+  providers: [AppService, CalendarService],
 })
 export class AppModule {}
