@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { environment } from '../../environments/environment';
+import ICAL from 'ical.js';
 
 // config for each calendar
 export interface CalendarSource {
@@ -40,21 +40,22 @@ export interface CalendarFetchResult {
   providedIn: 'root',
 })
 export class CalendarService {
-  // constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+  private url = '/api/calendar'; // TODO: make dynamic per source
 
-  // // Observable that emits merged, sorted, upcoming events across all sources.
-  // // Emits on initial load and whenever refresh occurs.
-  // readonly events$: Observable<CalendarEvent[]>;
+  getEvents(): Observable<CalendarEvent[]> {
+    return this.http.get(this.url, { responseType: 'text' }).pipe(
+     map(jcalData => this.parseJCal(jcalData))
+    );
+  }
 
-  // // Optional: per-source statuses for UI (errors, lastFetched)
-  // readonly sourceStatus$: Observable<CalendarFetchResult[]>;
-
-  // // Force an immediate refresh (returns a promise or observable for completion)
-  // refresh(): Promise<void>;
-
-  // // Optionally expose last updated timestamp
-  // readonly lastUpdated$: Observable<string | null>;
-
-  // // Optionally: get raw events from a specific source (useful for debugging)
-  // getRawCalendar(sourceId: string): Observable<unknown>;
+  parseJCal(jcalData: string): CalendarEvent[] {
+    const parsedData = ICAL.parse(jcalData);
+    const event: CalendarEvent = {
+      id: '',
+      title: 'Sample Event',
+      start: '',
+    };
+    return [event]; // TODO: implement JCal parsing logic
+  }
 }

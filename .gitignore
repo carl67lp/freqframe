@@ -44,3 +44,7 @@ Thumbs.db
 .github/instructions/nx.instructions.md
 
 .angular
+
+apps/freqframe-api/config/*.local.json
+apps/freqframe-api/.env.development
+apps/freqframe-api/.env.production
