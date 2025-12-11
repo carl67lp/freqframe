@@ -8,7 +8,7 @@ export class CalendarController {
   constructor(private readonly calendarService: CalendarService) {}
 
   @Get()
-  async getCalendarData(@Query('name') calendarName: string = 'Home') {
+  async getCalendarData(@Query('name') calendarName = 'Home') {
     try {
       // Fetch raw calendar multistatus XML from service
       const { status, body } = await this.calendarService.getCalendarData(calendarName);
