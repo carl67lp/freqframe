@@ -1,1 +1,27 @@
-<p>calendar-pane works!</p>
+<div class="calendar-pane-content">
+  <h2>Calendar</h2>
+  <button class="refresh-btn" (click)="onRefresh()">Refresh</button>
+  
+  @if (events$ | async; as events) {
+    @if (events.length > 0) {
+      <ul class="events-list">
+        @for (event of events; track event.id) {
+          <li class="event-item">
+            <div class="event-time">{{ event.start | date:'short' }}</div>
+            <div class="event-title">{{ event.title }}</div>
+            @if (event.location) {
+              <div class="event-location">📍 {{ event.location }}</div>
+            }
+            @if (event.calendarName) {
+              <div class="event-calendar">{{ event.calendarName }}</div>
+            }
+          </li>
+        }
+      </ul>
+    } @else {
+      <p class="no-events">No upcoming events</p>
+    }
+  } @else {
+    <p class="loading">Loading events...</p>
+  }
+</div>
