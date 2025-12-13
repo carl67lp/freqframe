@@ -1,0 +1,12 @@
+node_modules
+npm-debug.log
+dist
+.git
+.gitignore
+certs
+.env
+.DS_Store
+*.local.yaml
+calendars.*.yaml
+apps/freqframe-api/src/app/config/calendars.local.yaml
+apps/freqframe-api/src/app/config/calendars.production.yaml
