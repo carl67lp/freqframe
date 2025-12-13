@@ -32,8 +32,8 @@ RUN npm ci --only=production
 # Copy built app from builder
 COPY --from=builder /build/dist/apps/freqframe-api ./dist
 
-# Copy config template (user will mount their local config)
-COPY apps/freqframe-api/src/app/config/calendars.example.yaml ./config/calendars.example.yaml
+# Create config directory (will be mounted by docker-compose)
+RUN mkdir -p ./config
 
 EXPOSE 3000
 
