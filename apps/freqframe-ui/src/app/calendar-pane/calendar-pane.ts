@@ -15,7 +15,7 @@ export class CalendarPane {
   readonly start = new Date(Date.now());
   readonly end = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
-  readonly events$ = this.calendarService.getEvents(this.start, this.end);
+  readonly events$ = this.calendarService.getEventsAutoRefresh(this.start, this.end);
 
   onRefresh() {
     // TODO: add refresh method to service when needed

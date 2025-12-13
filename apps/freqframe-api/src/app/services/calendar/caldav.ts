@@ -34,6 +34,7 @@ export class CaldavService {
     startDate?: Date, endDate?: Date
   ): Promise<{ status: number; events: CalendarEvent[] }> {
     try {
+      console.log(`Fetching calendar events for '${calendarName}' from CalDAV service...`);
       // Fetch raw calendar multistatus XML from service
       const { status, body } = await this.getRawXmlData(calendarName, {
         startDate: startDate ? new Date(startDate) : undefined,

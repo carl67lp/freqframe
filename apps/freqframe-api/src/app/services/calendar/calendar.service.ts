@@ -26,8 +26,14 @@ export class CalendarService {
   }
 
   async getCalendarEvents(
-    calendarName: string, startDate?: Date, endDate?: Date 
+    calendarName?: string, startDate?: Date, endDate?: Date 
   ): Promise<{ status: number; events: CalendarEvent[] }> {
+    // If no calendar specified, get all calendars
+    if (!calendarName) {
+      return this.getAllCalendarEvents(startDate, endDate);
+    }
+
+    // Otherwise get specific calendar
     if (!this.calendars[calendarName]) {
       throw new HttpException(
         `Unknown calendar: ${calendarName}`,
@@ -35,5 +41,20 @@ export class CalendarService {
       );
     }
     return this.caldav.getCalendarEvents(calendarName, startDate, endDate);
+  }
+
+  async getAllCalendarEvents(
+    startDate?: Date, endDate?: Date 
+  ): Promise<{ status: number; events: CalendarEvent[] }> {
+    const allEvents: CalendarEvent[] = [];
+    for (const calendarName of Object.keys(this.calendars)) {
+      const { events } = await this.caldav.getCalendarEvents(calendarName, startDate, endDate);
+      allEvents.push(...events);
+    }
+
+    // Sort events by start date
+    allEvents.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+
+    return { status: 200, events: allEvents };
   }
 }

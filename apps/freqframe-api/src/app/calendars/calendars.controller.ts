@@ -12,11 +12,11 @@ export class CalendarsController {
 
   @Get('events')
   async getCalendarData(
-            @Query('name') calendarName = 'Home',
+            @Query('name') calendarName?: string,
             @Query('startDate') startDate?: string,
             @Query('endDate') endDate?: string) {
     const eventsResponse = await this.calendarService.getCalendarEvents(
-      calendarName,
+      calendarName ? calendarName : undefined,
       startDate ? new Date(startDate) : undefined,
       endDate ? new Date(endDate) : undefined
     );

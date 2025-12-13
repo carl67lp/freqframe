@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, map, interval, switchMap, startWith } from 'rxjs';
 import { CalendarEvent } from '@freqframe/shared-types';
 
 @Injectable({
@@ -9,7 +9,7 @@ import { CalendarEvent } from '@freqframe/shared-types';
 
 export class CalendarService {
   private http = inject(HttpClient);
-  private url = 'http://localhost:3000/api/calendars/events/'; // XXX: adjust for deployment
+  private url = 'http://localhost:3000/api/calendars/events'; // XXX: adjust for deployment
 
   getEvents(startDate?: Date, endDate?: Date): Observable<CalendarEvent[]> {
     let params = new HttpParams();
@@ -25,5 +25,12 @@ export class CalendarService {
       .pipe(map((response) => {
         return response.events;
       }));
+  }
+
+  getEventsAutoRefresh(startDate: Date, endDate: Date, refreshIntervalMs = 300000): Observable<CalendarEvent[]> {
+    return interval(refreshIntervalMs).pipe(
+      startWith(0),
+      switchMap(() => this.getEvents(startDate, endDate))
+    );
   }
 }
