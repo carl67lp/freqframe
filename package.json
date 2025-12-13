@@ -2,7 +2,9 @@
   "name": "@freqframe/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "build": "nx build"
+  },
   "private": true,
   "dependencies": {
     "@angular/common": "~20.3.0",
