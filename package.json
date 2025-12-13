@@ -24,6 +24,7 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "~7.8.0",
     "xml2js": "^0.6.2",
+    "yaml": "^2.8.2",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
