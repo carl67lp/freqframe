@@ -8,7 +8,7 @@ import { CalendarEvent } from '@freqframe/shared-types';
 })
 export class CalendarService {
   private http = inject(HttpClient);
-  private url = 'http://localhost:3000/calendars/events'; // XXX: adjust for deployment
+  private url = 'http://localhost:3000/api/calendars/events'; // XXX: adjust for deployment
 
   getEvents(startDate?: Date, endDate?: Date): Observable<CalendarEvent[]> {
     let params = new HttpParams();
