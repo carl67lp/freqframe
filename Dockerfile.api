@@ -1,0 +1,42 @@
+# Build stage
+FROM node:22-alpine AS builder
+
+WORKDIR /build
+
+# Copy monorepo files
+COPY package.json package-lock.json ./
+COPY tsconfig.base.json ./
+COPY nx.json ./
+
+# Copy apps
+COPY apps/freqframe-api ./apps/freqframe-api
+COPY shared-types ./shared-types
+
+# Install dependencies
+RUN npm ci
+
+# Build API
+RUN npm run build -- freqframe-api --prod
+
+# Runtime stage
+FROM node:22-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package.json package-lock.json ./
+
+# Install production dependencies only
+RUN npm ci --only=production
+
+# Copy built app from builder
+COPY --from=builder /build/dist/apps/freqframe-api ./dist
+
+# Copy config template (user will mount their local config)
+COPY apps/freqframe-api/src/app/config/calendars.example.yaml ./config/calendars.example.yaml
+
+EXPOSE 3000
+
+ENV NODE_ENV=production
+
+CMD ["node", "dist/main.js"]
