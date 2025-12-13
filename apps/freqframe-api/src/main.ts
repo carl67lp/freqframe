@@ -7,7 +7,20 @@ async function bootstrap() {
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
   app.enableCors({
-    origin: ['http://localhost:4200', 'http://127.0.0.1:4200'], // XXX: adjust for deployment
+    origin: (origin, callback) => {
+      // Allow development origins
+      if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1')) {
+        callback(null, true);
+        return;
+      }
+      // Allow production origins (homelab)
+      if (origin.includes('homelab.local') || origin.includes('homedashboard.local') || origin.includes('192.168')) {
+        callback(null, true);
+        return;
+      }
+      // Reject others
+      callback(new Error('CORS not allowed'));
+    },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',    
     credentials: true,
   });

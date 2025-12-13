@@ -6,8 +6,8 @@ export const environment = {
   production: true,
   weatherApi: {
     baseUrl: 'https://api.weather.com/v2/pws/observations/current',
-    stationId: 'YOUR_STATION_ID',
-    apiKey: 'YOUR_WEATHER_API_KEY',
+    stationId: 'WEATHER_STATION_ID_REDACTED',
+    apiKey: 'WEATHER_API_KEY_REDACTED',
   },
   solarApi: {
     baseUrl:
