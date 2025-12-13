@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, map, catchError } from 'rxjs';
 import { CalendarEvent } from '@freqframe/shared-types';
 
 @Injectable({
@@ -17,9 +17,15 @@ export class CalendarService {
     console.log('Calling calendar API:', this.url, { startDate, endDate });
     return this.http
       .get<{ status: number; events: CalendarEvent[] }>(this.url, { params })
-      .pipe(map((response) => {
-        console.log('Calendar events received:', response.events);
-        return response.events;
-      }));
+      .pipe(
+        map((response) => {
+          console.log('Calendar events received:', response.events);
+          return response.events;
+        }),
+        catchError((error) => {
+          console.error('Calendar API error:', error);
+          throw error;
+        })
+      );
   }
 }
