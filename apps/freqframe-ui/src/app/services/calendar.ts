@@ -6,6 +6,7 @@ import { CalendarEvent } from '@freqframe/shared-types';
 @Injectable({
   providedIn: 'root',
 })
+
 export class CalendarService {
   private http = inject(HttpClient);
   private url = 'http://localhost:3000/api/calendars/events/'; // XXX: adjust for deployment
@@ -19,12 +20,9 @@ export class CalendarService {
       params = params.set('endDate', endDate.toISOString());
     }
 
-    console.log('Calling calendar API:', this.url, params.toString());
-
     return this.http
       .get<{ status: number; events: CalendarEvent[] }>(this.url, { params })
       .pipe(map((response) => {
-        console.log('Calendar events received:', response.events);
         return response.events;
       }));
   }

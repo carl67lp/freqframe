@@ -22,7 +22,6 @@ export class CalendarService {
   }
 
   async getCalendarList(): Promise<string[]> {
-    console.log('Calendars config:', this.calendars);
     return Object.keys(this.calendars);
   }
 
