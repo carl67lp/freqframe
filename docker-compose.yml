@@ -12,8 +12,8 @@ services:
       CALDAV_USERNAME: ${CALDAV_USERNAME}
       CALDAV_PASSWORD: ${CALDAV_PASSWORD}
     volumes:
-      # Mount your local calendars config
-      - ./apps/freqframe-api/src/app/config/calendars.local.yaml:/app/config/calendars.local.yaml:ro
+      # Mount your production calendars config
+      - ./apps/freqframe-api/src/app/config/calendars.production.yaml:/app/config/calendars.production.yaml:ro
     expose:
       - "3000"
     networks:
