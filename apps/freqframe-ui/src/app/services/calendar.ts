@@ -9,7 +9,7 @@ import { CalendarEvent } from '@freqframe/shared-types';
 
 export class CalendarService {
   private http = inject(HttpClient);
-  private url = 'http://localhost:3000/api/calendars/events'; // XXX: adjust for deployment
+  private url = '/api/calendars/events'; // Relative path - uses current origin
 
   getEvents(startDate?: Date, endDate?: Date): Observable<CalendarEvent[]> {
     let params = new HttpParams();
