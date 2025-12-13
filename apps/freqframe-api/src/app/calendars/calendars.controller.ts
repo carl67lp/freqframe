@@ -12,12 +12,18 @@ export class CalendarsController {
 
   @Get('events')
   async getCalendarData(@Query('name') calendarName = 'Home', @Query('startDate') startDate?: string, @Query('endDate') endDate?: string) {
-    const eventsResponse = await this.calendarService.getCalendarEvents(
-      calendarName,
-      startDate ? new Date(startDate) : undefined,
-      endDate ? new Date(endDate) : undefined
-    );
-    console.log('Events response:', eventsResponse);
-    return eventsResponse;
+    console.log('getCalendarData called with:', { calendarName, startDate, endDate });
+    try {
+      const eventsResponse = await this.calendarService.getCalendarEvents(
+        calendarName,
+        startDate ? new Date(startDate) : undefined,
+        endDate ? new Date(endDate) : undefined
+      );
+      console.log('Events response:', eventsResponse);
+      return eventsResponse;
+    } catch (error) {
+      console.error('Error in getCalendarData:', error);
+      throw error;
+    }
   }
 }
