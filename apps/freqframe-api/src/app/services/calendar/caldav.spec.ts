@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { Caldav } from './caldav';
+import { CaldavService } from './caldav';
 
 describe('Caldav', () => {
-  let service: Caldav;
+  let service: CaldavService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(Caldav);
+    service = TestBed.inject(CaldavService);
   });
 
   it('should be created', () => {

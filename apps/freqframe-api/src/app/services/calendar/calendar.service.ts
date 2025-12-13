@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { CaldavService } from './caldav';
 import { CalendarEvent } from '@freqframe/shared-types';
 import { ConfigService } from '@nestjs/config';

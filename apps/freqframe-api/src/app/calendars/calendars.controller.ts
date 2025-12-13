@@ -1,4 +1,4 @@
-import { Controller, Get, Query, HttpException, HttpStatus, Header } from '@nestjs/common';
+import { Controller, Get, Query, Header } from '@nestjs/common';
 import { CalendarService } from '../services/calendar/calendar.service';
 
 @Controller('calendars')
