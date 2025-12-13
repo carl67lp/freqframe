@@ -48,3 +48,4 @@ Thumbs.db
 apps/freqframe-api/config/*.local.json
 apps/freqframe-api/.env.development
 apps/freqframe-api/.env.production
+apps/freqframe-api/calendars.*.yaml

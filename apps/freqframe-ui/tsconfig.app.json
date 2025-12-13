@@ -7,6 +7,6 @@
     "module": "esnext",
     "types": []
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "../freqframe-api/src/app/services/calendar/caldav.ts", "../freqframe-api/src/app/services/calendar/caldav.spec.ts"],
   "exclude": ["src/**/*.spec.ts"]
 }

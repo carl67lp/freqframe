@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CalendarController } from './calendar/calendar.controller';
+import { CalendarsController } from './calendars/calendars.controller';
 import { ConfigModule } from '@nestjs/config';
 import { CalendarService } from './services/calendar/calendar.service';
 import calendarsConfig from './config/calendars.config';
+import { CaldavService } from './services/calendar/caldav';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import calendarsConfig from './config/calendars.config';
       load: [calendarsConfig],
     }),
   ],
-  controllers: [AppController, CalendarController],
-  providers: [AppService, CalendarService],
+  controllers: [AppController, CalendarsController],
+  providers: [AppService, CalendarService, CaldavService],
 })
 export class AppModule {}
