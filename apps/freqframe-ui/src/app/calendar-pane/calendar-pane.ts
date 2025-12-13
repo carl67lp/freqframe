@@ -9,6 +9,7 @@ import { CalendarService } from '../services/calendar';
   templateUrl: './calendar-pane.html',
   styleUrl: './calendar-pane.css',
 })
+
 export class CalendarPane {
   private calendarService = inject(CalendarService);
   readonly start = new Date(Date.now());

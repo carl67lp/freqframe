@@ -18,6 +18,7 @@ export class CalendarsController {
       startDate ? new Date(startDate) : undefined,
       endDate ? new Date(endDate) : undefined
     );
+    console.log('Events response:', eventsResponse);
     return eventsResponse;
   }
 }

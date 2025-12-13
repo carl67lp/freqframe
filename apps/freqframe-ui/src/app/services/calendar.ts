@@ -8,14 +8,18 @@ import { CalendarEvent } from '@freqframe/shared-types';
 })
 export class CalendarService {
   private http = inject(HttpClient);
-  private url = 'http://localhost:3000/api/calendar';
+  private url = 'http://localhost:3000/calendars/events'; // XXX: adjust for deployment
 
   getEvents(startDate?: Date, endDate?: Date): Observable<CalendarEvent[]> {
-  let params = new HttpParams();
-  if (startDate) params = params.set('startDate', startDate.toISOString());
-  if (endDate) params = params.set('endDate', endDate.toISOString());
-  return this.http.get<{ status: number; events: CalendarEvent[] }>(this.url, { params }).pipe(
-    map(response => response.events)
-  );
-}
+    let params = new HttpParams();
+    if (startDate) params = params.set('startDate', startDate.toISOString());
+    if (endDate) params = params.set('endDate', endDate.toISOString());
+    console.log('Calling calendar API:', this.url, { startDate, endDate });
+    return this.http
+      .get<{ status: number; events: CalendarEvent[] }>(this.url, { params })
+      .pipe(map((response) => {
+        console.log('Calendar events received:', response.events);
+        return response.events;
+      }));
+  }
 }
