@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, map, catchError, of } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface WeatherData {
@@ -18,13 +18,30 @@ export class WeatherDataService {
   private http: HttpClient = inject(HttpClient);
 
   getWeather(): Observable<WeatherData> {
-    return this.http.get<WeatherData>(this.apiUrl).pipe(
-      map((data: any) => ({
-        temperature: data.observations[0].imperial.temp,
-        humidity: data.observations[0].humidity,
-        windSpeed: data.observations[0].imperial.windSpeed,
-        windDirection: data.observations[0].winddir,
-      }))
+    console.log('Fetching weather from:', this.apiUrl);
+    return this.http.get<any>(this.apiUrl).pipe(
+      map((data: any) => {
+        console.log('Weather API response:', data);
+        if (!data || !data.observations || !data.observations[0]) {
+          throw new Error('Invalid weather API response structure');
+        }
+        return {
+          temperature: data.observations[0].imperial.temp,
+          humidity: data.observations[0].humidity,
+          windSpeed: data.observations[0].imperial.windSpeed,
+          windDirection: data.observations[0].winddir,
+        };
+      }),
+      catchError((error) => {
+        console.error('Weather API error:', error);
+        // Return dummy data so pane doesn't crash
+        return of({
+          temperature: 0,
+          humidity: 0,
+          windSpeed: 0,
+          windDirection: 0,
+        });
+      })
     );
   }
 }
