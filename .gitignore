@@ -47,4 +47,5 @@ Thumbs.db
 
 apps/freqframe-api/.env.development
 apps/freqframe-api/.env.production
-apps/freqframe-api/calendars.*.yaml
+apps/freqframe-api/src/app/config/calendars.development.yaml
+apps/freqframe-api/src/app/config/calendars.production.yaml
