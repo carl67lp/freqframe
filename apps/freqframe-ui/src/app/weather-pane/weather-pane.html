@@ -2,14 +2,36 @@
   <h2>Weather</h2>
 
   @if (weatherData$ | async; as weatherData) {
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-label">Temperature</div>
-      <div class="stat-value">
-        {{ weatherData.temperature }}<span class="unit">°F</span>
-      </div>
+  
+  <!-- Current Conditions - Prominent Display -->
+  @if (weatherData.todayCondition) {
+  <div class="current-conditions">
+    <div class="condition-main">
+      <div class="weather-icon-large">{{ getWeatherIcon(weatherData.todayIconCode) }}</div>
+      <div class="temp-large">{{ weatherData.temperature }}<span class="unit">°F</span></div>
     </div>
+    <div class="condition-text">{{ weatherData.todayCondition }}</div>
+    <div class="feels-like">Feels like {{ weatherData.feelsLike }}°</div>
+    @if (weatherData.todayHigh && weatherData.todayLow) {
+    <div class="high-low">H: {{ weatherData.todayHigh }}° L: {{ weatherData.todayLow }}°</div>
+    }
+  </div>
+  }
 
+  <!-- Forecast - Tomorrow -->
+  @if (weatherData.tomorrowCondition) {
+  <div class="forecast-row">
+    <div class="forecast-label">Tomorrow</div>
+    <div class="weather-icon-small">{{ getWeatherIcon(weatherData.tomorrowIconCode) }}</div>
+    <div class="forecast-condition">{{ weatherData.tomorrowCondition }}</div>
+    @if (weatherData.tomorrowHigh && weatherData.tomorrowLow) {
+    <div class="forecast-temps">{{ weatherData.tomorrowHigh }}° / {{ weatherData.tomorrowLow }}°</div>
+    }
+  </div>
+  }
+
+  <!-- Current Stats Grid -->
+  <div class="stats-grid">
     <div class="stat-card">
       <div class="stat-label">Humidity</div>
       <div class="stat-value">
@@ -18,16 +40,10 @@
     </div>
 
     <div class="stat-card">
-      <div class="stat-label">Wind Speed</div>
+      <div class="stat-label">Wind</div>
       <div class="stat-value">
         {{ weatherData.windSpeed }}<span class="unit">mph</span>
-      </div>
-    </div>
-
-    <div class="stat-card">
-      <div class="stat-label">Wind Direction</div>
-      <div class="stat-value">
-        {{ bearingToDirection(weatherData.windDirection) }}<span class="unit"></span>
+        {{ bearingToDirection(weatherData.windDirection) }}
       </div>
     </div>
   </div>
