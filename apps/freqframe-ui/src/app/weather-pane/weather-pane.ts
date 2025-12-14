@@ -12,7 +12,7 @@ import { Observable } from 'rxjs';
 })
 export class WeatherPane {
   private weatherService = inject(WeatherDataService);
-  weatherData$: Observable<WeatherData> = this.weatherService.getWeather();
+  weatherData$: Observable<WeatherData> = this.weatherService.getWeatherAutoRefresh();
 
   DIRECTIONS = [
     "N", "NNE", "NE", "ENE",
