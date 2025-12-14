@@ -10,7 +10,8 @@ import { environment } from '../../environments/environment';
 
 export class CalendarService {
   private http = inject(HttpClient);
-  private apiBaseUrl = environment.apiBaseUrl;
+  // Use relative path if in production (detected by hostname), otherwise use localhost
+  private apiBaseUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
   private url = `${this.apiBaseUrl}/api/calendars/events`;
 
   getEvents(startDate?: Date, endDate?: Date): Observable<CalendarEvent[]> {
