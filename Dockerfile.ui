@@ -16,7 +16,7 @@ COPY shared-types ./shared-types
 RUN npm ci
 
 # Build UI for production
-RUN npm run build -- freqframe-ui --prod
+RUN npm run build -- freqframe-ui
 
 # Runtime stage - use nginx to serve static files
 FROM nginx:alpine
