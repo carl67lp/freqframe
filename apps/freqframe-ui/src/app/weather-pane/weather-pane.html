@@ -7,14 +7,27 @@
   @if (weatherData.todayCondition) {
   <div class="current-conditions">
     <div class="condition-main">
-      <div class="weather-icon-large">{{ getWeatherIcon(weatherData.todayIconCode) }}</div>
-      <div class="temp-large">{{ weatherData.temperature }}<span class="unit">°F</span></div>
+      <div class="condition-left">
+        <div class="weather-icon-large">{{ getWeatherIcon(weatherData.todayIconCode) }}</div>
+        <div class="temp-large">{{ weatherData.temperature }}<span class="unit">°F</span></div>
+        <div class="condition-text">{{ weatherData.todayCondition }}</div>
+        <div class="feels-like">Feels like {{ weatherData.feelsLike }}°</div>
+        @if (weatherData.todayHigh && weatherData.todayLow) {
+        <div class="high-low">H: {{ weatherData.todayHigh }}° L: {{ weatherData.todayLow }}°</div>
+        }
+      </div>
+      <div class="condition-right">
+        <div class="condition-stat">
+          <div class="condition-stat-label">Humidity</div>
+          <div class="condition-stat-value">{{ weatherData.humidity }}<span class="unit">%</span></div>
+        </div>
+        <div class="condition-stat">
+          <div class="condition-stat-label">Wind</div>
+          <div class="condition-stat-value">{{ weatherData.windSpeed }}<span class="unit">mph</span></div>
+          <div class="wind-direction">{{ bearingToDirection(weatherData.windDirection) }}</div>
+        </div>
+      </div>
     </div>
-    <div class="condition-text">{{ weatherData.todayCondition }}</div>
-    <div class="feels-like">Feels like {{ weatherData.feelsLike }}°</div>
-    @if (weatherData.todayHigh && weatherData.todayLow) {
-    <div class="high-low">H: {{ weatherData.todayHigh }}° L: {{ weatherData.todayLow }}°</div>
-    }
   </div>
   }
 
@@ -30,23 +43,7 @@
   </div>
   }
 
-  <!-- Current Stats Grid -->
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-label">Humidity</div>
-      <div class="stat-value">
-        {{ weatherData.humidity }}<span class="unit">%</span>
-      </div>
-    </div>
 
-    <div class="stat-card">
-      <div class="stat-label">Wind</div>
-      <div class="stat-value">
-        {{ weatherData.windSpeed }}<span class="unit">mph</span>
-        {{ bearingToDirection(weatherData.windDirection) }}
-      </div>
-    </div>
-  </div>
   } @else {
   <p>Loading weather data...</p>
   }
