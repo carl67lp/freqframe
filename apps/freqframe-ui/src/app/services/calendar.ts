@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map, interval, switchMap, startWith } from 'rxjs';
 import { CalendarEvent } from '@freqframe/shared-types';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -9,7 +10,7 @@ import { CalendarEvent } from '@freqframe/shared-types';
 
 export class CalendarService {
   private http = inject(HttpClient);
-  private url = '/api/calendars/events'; // Relative path - uses current origin
+  private url = environment.production ? '/api/calendars/events' : 'http://localhost:3000/api/calendars/events';
 
   getEvents(startDate?: Date, endDate?: Date): Observable<CalendarEvent[]> {
     let params = new HttpParams();
