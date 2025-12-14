@@ -4,6 +4,7 @@
 
 export const environment = {
   production: true,
+  apiBaseUrl: '',  // Empty string means use relative path (current origin)
   weatherApi: {
     baseUrl: 'https://api.weather.com/v2/pws/observations/current',
     stationId: 'WEATHER_STATION_ID_REDACTED',
