@@ -64,11 +64,31 @@
   background: linear-gradient(90deg, rgba(74, 222, 128, 0.08), transparent);
   border-radius: 0.3rem;
   transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
 }
 
 .event-item:hover {
   background: linear-gradient(90deg, rgba(74, 222, 128, 0.15), transparent);
   box-shadow: inset 0 0 8px rgba(74, 222, 128, 0.1);
+}
+
+.event-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-initial {
+  font-size: 3rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.1);
+  margin-left: 1rem;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
 .event-time {
@@ -89,14 +109,6 @@
   font-size: 0.813rem;
   color: var(--muted-color);
   margin-bottom: 0.25rem;
-}
-
-.event-calendar {
-  font-size: 0.75rem;
-  color: #86efac;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 500;
 }
 
 .no-events {

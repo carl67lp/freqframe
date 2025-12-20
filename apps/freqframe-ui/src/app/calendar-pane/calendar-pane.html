@@ -12,13 +12,15 @@
             <ul class="events-list">
               @for (event of group.events; track event.id) {
                 <li class="event-item" [ngClass]="'calendar-' + event.calendarName?.toLowerCase()">
-                  <div class="event-time">{{ event.start | date:'short' }}</div>
-                  <div class="event-title">{{ event.title }}</div>
-                  @if (event.location) {
-                    <div class="event-location">📍 {{ event.location }}</div>
-                  }
+                  <div class="event-content">
+                    <div class="event-time">{{ event.start | date:'short' }}</div>
+                    <div class="event-title">{{ event.title }}</div>
+                    @if (event.location) {
+                      <div class="event-location">📍 {{ event.location }}</div>
+                    }
+                  </div>
                   @if (event.calendarName) {
-                    <div class="event-calendar">{{ event.calendarName }}</div>
+                    <div class="calendar-initial">{{ event.calendarName.charAt(0).toUpperCase() }}</div>
                   }
                 </li>
               }
