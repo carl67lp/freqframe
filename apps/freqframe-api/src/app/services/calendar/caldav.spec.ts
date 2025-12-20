@@ -207,6 +207,42 @@ END:VCALENDAR</calendar-data>
       expect(result.events.length).toBe(1);
       expect(result.events[0].id).toBe('event-1');
       expect(result.events[0].title).toBe('Meeting');
+      expect(result.events[0].calendarName).toBe('Alice');
+    });
+
+    it('should include calendarName in returned events', async () => {
+      const mockXml = `<?xml version="1.0" encoding="utf-8"?>
+<multistatus xmlns="DAV:">
+  <response>
+    <propstat>
+      <prop>
+        <getetag>"123"</getetag>
+        <calendar-data>BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Test//EN
+BEGIN:VEVENT
+UID:event-2
+DTSTART:20250115T140000Z
+DTEND:20250115T150000Z
+SUMMARY:Team Sync
+END:VEVENT
+END:VCALENDAR</calendar-data>
+      </prop>
+      <status>HTTP/1.1 200 OK</status>
+    </propstat>
+  </response>
+</multistatus>`;
+
+      jest.spyOn(global, 'fetch' as any).mockResolvedValueOnce({
+        status: 207,
+        text: jest.fn().mockResolvedValue(mockXml),
+      });
+
+      const result = await service.getCalendarEvents('Bob', new Date('2024-12-01'), new Date('2025-12-31'));
+
+      expect(result.events.length).toBe(1);
+      expect(result.events[0].calendarName).toBe('Bob');
+      expect(result.events[0].title).toBe('Team Sync');
     });
 
     it('should return empty array when no events found', async () => {

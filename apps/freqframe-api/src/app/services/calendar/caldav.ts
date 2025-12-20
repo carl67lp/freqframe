@@ -95,6 +95,7 @@ export class CaldavService {
                 start: event.startDate.toJSDate().toISOString(),
                 end: event.endDate?.toJSDate().toISOString(),
                 allDay: event.startDate.icaltype === 'date',
+                calendarName: calendarName,
               });
             }
           } else {
@@ -121,6 +122,7 @@ export class CaldavService {
                   start: occStart.toISOString(),
                   end: occEnd.toJSDate().toISOString(),
                   allDay: event.startDate.icaltype === 'date',
+                  calendarName: calendarName,
                   isRecurring: true,
                 });
               }

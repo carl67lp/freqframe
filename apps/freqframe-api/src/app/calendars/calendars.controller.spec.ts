@@ -11,6 +11,7 @@ describe('CalendarsController', () => {
   const mockEvents: CalendarEvent[] = [
     {
       id: '1',
+      calendarName: 'Alice',
       title: 'Team Meeting',
       description: 'Weekly sync',
       location: 'Conference Room A',
@@ -20,6 +21,7 @@ describe('CalendarsController', () => {
     },
     {
       id: '2',
+      calendarName: 'Bob',
       title: 'Holiday',
       start: '2024-12-25T00:00:00Z',
       end: '2024-12-26T00:00:00Z',
@@ -134,6 +136,17 @@ describe('CalendarsController', () => {
 
       expect(result.events).toEqual([]);
       expect(result.status).toBe(200);
+    });
+
+    it('should include calendarName in returned events', async () => {
+      const calendarName = 'Work';
+      jest.spyOn(service, 'getCalendarEvents').mockResolvedValue(mockServiceResponse);
+
+      const result = await controller.getCalendarData(calendarName);
+
+      expect(result.events.length).toBe(2);
+      expect(result.events[0].calendarName).toBe('Alice');
+      expect(result.events[1].calendarName).toBe('Bob');
     });
 
     it('should propagate errors from the service', async () => {
