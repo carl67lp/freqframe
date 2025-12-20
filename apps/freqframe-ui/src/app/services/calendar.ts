@@ -2,7 +2,6 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { CalendarEvent } from '@freqframe/shared-types';
-import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
