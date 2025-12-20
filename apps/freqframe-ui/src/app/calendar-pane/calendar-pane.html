@@ -11,7 +11,7 @@
             <h3 class="date-label">{{ group.dateLabel }}</h3>
             <ul class="events-list">
               @for (event of group.events; track event.id) {
-                <li class="event-item">
+                <li class="event-item" [ngClass]="'calendar-' + event.calendarName?.toLowerCase()">
                   <div class="event-time">{{ event.start | date:'short' }}</div>
                   <div class="event-title">{{ event.title }}</div>
                   @if (event.location) {
