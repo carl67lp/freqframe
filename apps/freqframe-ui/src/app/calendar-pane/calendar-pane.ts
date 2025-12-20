@@ -45,60 +45,55 @@ export class CalendarPane {
   }
 
   private groupEventsByDate(events: CalendarEvent[]): GroupedEvent[] {
-    const grouped = new Map<string, CalendarEvent[]>();
+    const grouped = new Map<string, { events: CalendarEvent[], sortKey: string }>();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     for (const event of events) {
       const eventDate = new Date(event.start);
       eventDate.setHours(0, 0, 0, 0);
-      const dateLabel = this.getDateLabel(eventDate, today);
+      const { label, sortKey } = this.getDateLabel(eventDate, today);
 
-      if (!grouped.has(dateLabel)) {
-        grouped.set(dateLabel, []);
+      if (!grouped.has(label)) {
+        grouped.set(label, { events: [], sortKey });
       }
-      grouped.get(dateLabel)!.push(event);
+      grouped.get(label)!.events.push(event);
     }
 
-    // Sort by date and return
+    // Sort by sort key and return
     return Array.from(grouped.entries())
-      .map(([dateLabel, events]) => ({ dateLabel, events }))
-      .sort((a, b) => this.compareDateLabels(a.dateLabel, b.dateLabel));
+      .map(([dateLabel, { events, sortKey }]) => ({ dateLabel, events, sortKey }))
+      .sort((a, b) => {
+        const aKey = a.sortKey;
+        const bKey = b.sortKey;
+        // Sort keys are ISO dates or order indices, so string comparison works
+        return aKey.localeCompare(bKey);
+      })
+      .map(({ dateLabel, events }) => ({ dateLabel, events }));
   }
 
-  private getDateLabel(eventDate: Date, today: Date): string {
+  private getDateLabel(eventDate: Date, today: Date): { label: string; sortKey: string } {
     const diffTime = eventDate.getTime() - today.getTime();
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const isoDate = eventDate.toISOString().split('T')[0]; // YYYY-MM-DD
 
-    if (diffDays === 0) return 'Today';
-    if (diffDays === 1) return 'Tomorrow';
+    if (diffDays === 0) return { label: 'Today', sortKey: '0-today' };
+    if (diffDays === 1) return { label: 'Tomorrow', sortKey: '1-tomorrow' };
 
     // Within one week, show day of week
     if (diffDays > 1 && diffDays < 7) {
       const dayName = eventDate.toLocaleDateString('en-US', { weekday: 'long' });
-      return dayName;
+      const sortKey = `2-${diffDays.toString().padStart(2, '0')}-${dayName}`;
+      return { label: dayName, sortKey };
     }
 
-    // Beyond one week, show full date
-    return eventDate.toLocaleDateString('en-US', {
+    // Beyond one week, show full date with ISO key for proper sorting
+    const label = eventDate.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
     });
-  }
-
-  private compareDateLabels(a: string, b: string): number {
-    const order = ['Today', 'Tomorrow', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    const aIndex = order.indexOf(a);
-    const bIndex = order.indexOf(b);
-
-    // If both are in order array, sort by that order
-    if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
-    // If one is in order array, it comes first
-    if (aIndex !== -1) return -1;
-    if (bIndex !== -1) return 1;
-    // Otherwise sort alphabetically (for dates like "Dec 28, 2025")
-    return a.localeCompare(b);
+    return { label, sortKey: isoDate };
   }
 
   onRefresh() {
