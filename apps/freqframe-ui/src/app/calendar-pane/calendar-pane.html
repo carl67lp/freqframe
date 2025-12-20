@@ -1,6 +1,7 @@
 <div class="calendar-pane-content">
-  <h2>Calendar</h2>
-  <!--<button class="refresh-btn" (click)="onRefresh()">Refresh</button>-->
+  <div class="header">
+    <h2>{{ currentDate | date:'EEEE, MMMM d, yyyy' }}</h2>
+  </div>
   
   @if (events$ | async; as events) {
     @if (events.length > 0) {

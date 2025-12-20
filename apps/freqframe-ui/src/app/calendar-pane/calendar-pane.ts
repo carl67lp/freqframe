@@ -14,6 +14,7 @@ import { CalendarEvent } from '@freqframe/shared-types';
 
 export class CalendarPane {
   private calendarService = inject(CalendarService);
+  readonly currentDate = new Date();
 
   readonly events$ = new Observable<CalendarEvent[]>(observer => {
     const refreshInterval = setInterval(() => {
