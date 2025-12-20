@@ -3,22 +3,29 @@
     <h2>{{ currentDate | date:'EEEE, MMMM d, yyyy' }}</h2>
   </div>
   
-  @if (events$ | async; as events) {
-    @if (events.length > 0) {
-      <ul class="events-list">
-        @for (event of events; track event.id) {
-          <li class="event-item">
-            <div class="event-time">{{ event.start | date:'short' }}</div>
-            <div class="event-title">{{ event.title }}</div>
-            @if (event.location) {
-              <div class="event-location">📍 {{ event.location }}</div>
-            }
-            @if (event.calendarName) {
-              <div class="event-calendar">{{ event.calendarName }}</div>
-            }
-          </li>
+  @if (groupedEvents$ | async; as groupedEvents) {
+    @if (groupedEvents.length > 0) {
+      <div class="events-by-date">
+        @for (group of groupedEvents; track group.dateLabel) {
+          <div class="date-group">
+            <h3 class="date-label">{{ group.dateLabel }}</h3>
+            <ul class="events-list">
+              @for (event of group.events; track event.id) {
+                <li class="event-item">
+                  <div class="event-time">{{ event.start | date:'short' }}</div>
+                  <div class="event-title">{{ event.title }}</div>
+                  @if (event.location) {
+                    <div class="event-location">📍 {{ event.location }}</div>
+                  }
+                  @if (event.calendarName) {
+                    <div class="event-calendar">{{ event.calendarName }}</div>
+                  }
+                </li>
+              }
+            </ul>
+          </div>
         }
-      </ul>
+      </div>
     } @else {
       <p class="no-events">No upcoming events</p>
     }
