@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable, map, shareReplay } from 'rxjs';
+import { Observable, shareReplay } from 'rxjs';
 import { CalendarService } from '../services/calendar';
 import { CalendarEvent } from '@freqframe/shared-types';
 
@@ -16,12 +16,12 @@ interface GroupedEvent {
   templateUrl: './calendar-pane.html',
   styleUrl: './calendar-pane.css',
 })
-
 export class CalendarPane {
   private calendarService = inject(CalendarService);
   readonly currentDate = new Date();
+  lastUpdated: Date | null = null;
 
-  readonly groupedEvents$ = new Observable<GroupedEvent[]>(observer => {
+  readonly groupedEvents$ = new Observable<GroupedEvent[]>((observer) => {
     const refreshInterval = setInterval(() => {
       this.fetchAndGroupEvents(observer);
     }, 300000); // 5 minutes
@@ -33,11 +33,15 @@ export class CalendarPane {
   }).pipe(shareReplay(1));
 
   private fetchAndGroupEvents(observer: any) {
+    if (observer.closed) {
+      return;
+    }
     const start = new Date();
     const end = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
     this.calendarService.getEvents(start, end).subscribe(
       (events) => {
         const grouped = this.groupEventsByDate(events);
+        this.lastUpdated = new Date();
         observer.next(grouped);
       },
       (error) => observer.error(error)
@@ -45,8 +49,8 @@ export class CalendarPane {
   }
 
   private groupEventsByDate(events: CalendarEvent[]): GroupedEvent[] {
-    const grouped = new Map<string, { events: CalendarEvent[], sortKey: string }>();
-    const today = new Date();
+    const grouped = new Map<string, { events: CalendarEvent[]; sortKey: string }>();
+    const today = new Date(this.currentDate);
     today.setHours(0, 0, 0, 0);
 
     for (const event of events) {

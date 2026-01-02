@@ -124,21 +124,27 @@
 }
 
 .event-item.calendar-victoria {
-  border-left-color: #ff6b6b;  /* Red for Victoria */
+  border-left-color: #ff6b6b; /* Red for Victoria */
 }
 
 .event-item.calendar-lilah {
-  border-left-color: #4ecdc4;  /* Teal for Lilah */
+  border-left-color: #4ecdc4; /* Teal for Lilah */
 }
 
 .event-item.calendar-stella {
-  border-left-color: #ffe66d;  /* Yellow for Stella */
+  border-left-color: #ffe66d; /* Yellow for Stella */
 }
 
 .event-item.calendar-home {
-  border-left-color: #962096;  /* Purple for Home */
+  border-left-color: #962096; /* Purple for Home */
 }
 
 .event-item.calendar-carl {
-  border-left-color: #22c55e;  /* Green for Carl */
+  border-left-color: #22c55e; /* Green for Carl */
+}
+
+.last-updated {
+  font-size: 0.75rem;
+  color: #888;
+  font-weight: normal;
 }
