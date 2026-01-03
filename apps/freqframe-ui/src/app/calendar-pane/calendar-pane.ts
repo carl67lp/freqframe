@@ -18,13 +18,14 @@ interface GroupedEvent {
 })
 export class CalendarPane {
   private calendarService = inject(CalendarService);
+  private readonly calendarRefreshInterval = 30 * (60 * 1000); // 30 minutes
   readonly currentDate = new Date();
   lastUpdated: Date | null = null;
 
   readonly groupedEvents$ = new Observable<GroupedEvent[]>((observer) => {
     const refreshInterval = setInterval(() => {
       this.fetchAndGroupEvents(observer);
-    }, 300000); // 5 minutes
+    }, this.calendarRefreshInterval);
 
     // Initial fetch
     this.fetchAndGroupEvents(observer);
