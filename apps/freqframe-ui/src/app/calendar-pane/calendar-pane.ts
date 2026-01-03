@@ -38,14 +38,14 @@ export class CalendarPane {
     }
     const start = new Date();
     const end = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-    this.calendarService.getEvents(start, end).subscribe(
-      (events) => {
+    this.calendarService.getEvents(start, end).subscribe({
+      next: (events) => {
         const grouped = this.groupEventsByDate(events);
         this.lastUpdated = new Date();
         observer.next(grouped);
       },
-      (error) => observer.error(error)
-    );
+      error: (error) => observer.error(error),
+    });
   }
 
   private groupEventsByDate(events: CalendarEvent[]): GroupedEvent[] {
