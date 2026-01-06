@@ -6,9 +6,9 @@ import { ConfigModule } from '@nestjs/config';
 import { CalendarService } from './services/calendar/calendar.service';
 import calendarsConfig from './config/calendars.config';
 import { CaldavService } from './services/calendar/caldav';
-import { NotesController } from './notes/notes.controller';
 import { NotesService } from './services/notes/notes.service';
-import { LowdbStorageProviderService } from './services/notes/storage/lowdb-storage.provider.service';
+import { NotesController } from './notes/notes.controller';
+import { NotesRepository } from './services/notes/storage/notes-repository';
 
 @Module({
     imports: [
@@ -24,7 +24,10 @@ import { LowdbStorageProviderService } from './services/notes/storage/lowdb-stor
         CalendarService,
         CaldavService,
         NotesService,
-        LowdbStorageProviderService,
+        {
+            provide: NotesRepository,
+            useFactory: () => new NotesRepository('./db/notes.db'),
+        },
     ],
 })
 export class AppModule {}

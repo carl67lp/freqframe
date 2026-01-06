@@ -1,12 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotesService } from './notes.service';
+import { NotesRepository } from './storage/notes-repository';
 
 describe('NotesService', () => {
     let service: NotesService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            providers: [NotesService],
+            providers: [NotesService, NotesRepository],
         }).compile();
 
         service = module.get<NotesService>(NotesService);
@@ -14,11 +15,5 @@ describe('NotesService', () => {
 
     it('should be defined', () => {
         expect(service).toBeDefined();
-    });
-
-    describe('createNote', () => {
-        it('should create a note', async () => {
-            // Test implementation goes here
-        });
     });
 });

@@ -1,12 +1,25 @@
 import { Injectable } from '@nestjs/common';
+import { CreateNoteInput } from './storage/note';
+import { NotesRepository } from './storage/notes-repository';
 
 @Injectable()
 export class NotesService {
-    constructor(private storage: StorageProvider) {}
+    constructor(private storage: NotesRepository) {}
 
-    createNote(content: string): { id: number; content: string } {
+    createNote(content: CreateNoteInput): string {
         // Simple in-memory note creation logic for demonstration
-        const note = { id: Date.now(), content };
-        return note;
+        return this.storage.createNote(content);
+    }
+
+    getNote(id: string) {
+        return this.storage.getNote(id);
+    }
+
+    getAllNotes() {
+        return this.storage.getNotes();
+    }
+
+    deleteNote(id: string): boolean {
+        return this.storage.deleteNote(id);
     }
 }
