@@ -1,8 +1,8 @@
 <div class="weather-pane-content">
-  <h2>{{ currentDate | date:'EEEE, MMMM d, yyyy' }}</h2>
+  <h2>{{ currentDate() | date : 'EEEE, MMMM d, yyyy' }}</h2>
 
   @if (weatherData$ | async; as weatherData) {
-  
+
   <!-- Current Conditions - Prominent Display -->
   @if (weatherData.todayCondition) {
   <div class="current-conditions">
@@ -19,11 +19,15 @@
       <div class="condition-right">
         <div class="condition-stat">
           <div class="condition-stat-label">Humidity</div>
-          <div class="condition-stat-value">{{ weatherData.humidity }}<span class="unit">%</span></div>
+          <div class="condition-stat-value">
+            {{ weatherData.humidity }}<span class="unit">%</span>
+          </div>
         </div>
         <div class="condition-stat">
           <div class="condition-stat-label">Wind</div>
-          <div class="condition-stat-value">{{ weatherData.windSpeed }}<span class="unit">mph</span></div>
+          <div class="condition-stat-value">
+            {{ weatherData.windSpeed }}<span class="unit">mph</span>
+          </div>
           <div class="wind-direction">{{ bearingToDirection(weatherData.windDirection) }}</div>
         </div>
       </div>
@@ -38,13 +42,12 @@
     <div class="weather-icon-small">{{ getWeatherIcon(weatherData.tomorrowIconCode) }}</div>
     <div class="forecast-condition">{{ weatherData.tomorrowCondition }}</div>
     @if (weatherData.tomorrowHigh && weatherData.tomorrowLow) {
-    <div class="forecast-temps">{{ weatherData.tomorrowHigh }}° / {{ weatherData.tomorrowLow }}°</div>
+    <div class="forecast-temps">
+      {{ weatherData.tomorrowHigh }}° / {{ weatherData.tomorrowLow }}°
+    </div>
     }
   </div>
-  }
-
-
-  } @else {
+  } } @else {
   <p>Loading weather data...</p>
   }
 </div>
