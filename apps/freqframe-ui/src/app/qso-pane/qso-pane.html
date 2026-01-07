@@ -1,1 +1,20 @@
-<p>qso-pane works!</p>
+<div class="qso-pane">
+  <h2>Family Notes</h2>
+
+  <div *ngIf="loading" class="loading">Loading notes...</div>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div *ngIf="!loading && notes.length === 0" class="empty">No notes yet. Add one using Siri!</div>
+
+  <div class="notes-list" *ngIf="!loading && notes.length > 0">
+    <div class="note" *ngFor="let note of notes">
+      <div class="note-header">
+        <span class="note-author">{{ note.author }}</span>
+        <span class="note-time">{{ note.createdAt | date : 'short' }}</span>
+      </div>
+      <div class="note-content">{{ note.content }}</div>
+      <button class="delete-btn" (click)="deleteNote(note.id)">Delete</button>
+    </div>
+  </div>
+</div>

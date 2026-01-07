@@ -1,0 +1,33 @@
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+export interface Note {
+  id: string;
+  author: string;
+  content: string;
+  createdAt: string;
+  expiresAt?: string;
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class NotesService {
+  private http = inject(HttpClient);
+  private apiUrl = '/api/notes';
+
+  getNotes(): Observable<Note[]> {
+    return this.http.get<Note[]>(this.apiUrl).pipe(
+      // Sort by createdAt, most recent first
+      map((notes) =>
+        notes.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      )
+    );
+  }
+
+  deleteNote(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+}
