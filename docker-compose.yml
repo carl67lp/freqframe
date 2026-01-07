@@ -9,6 +9,7 @@ services:
             NODE_ENV: production
             CALDAV_USERNAME: ${CALDAV_USERNAME}
             CALDAV_PASSWORD: ${CALDAV_PASSWORD}
+            API_KEY: ${API_KEY}
         volumes:
             # Mount your production calendars config
             - ./apps/freqframe-api/src/app/config/calendars.production.yaml:/app/config/calendars.production.yaml:ro
