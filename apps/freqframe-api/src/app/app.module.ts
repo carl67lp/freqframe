@@ -9,6 +9,8 @@ import { CaldavService } from './services/calendar/caldav';
 import { NotesService } from './services/notes/notes.service';
 import { NotesController } from './notes/notes.controller';
 import { NotesRepository } from './services/notes/storage/notes-repository';
+import { mkdirSync } from 'fs';
+import { dirname } from 'path';
 
 @Module({
     imports: [
@@ -26,7 +28,12 @@ import { NotesRepository } from './services/notes/storage/notes-repository';
         NotesService,
         {
             provide: NotesRepository,
-            useFactory: () => new NotesRepository('./db/notes.db'),
+            useFactory: () => {
+                const dbPath = './db/notes.db';
+                // Ensure the directory exists
+                mkdirSync(dirname(dbPath), { recursive: true });
+                return new NotesRepository(dbPath);
+            },
         },
     ],
 })
