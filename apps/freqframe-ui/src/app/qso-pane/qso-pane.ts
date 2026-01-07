@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NotesService, Note } from '../services/notes.service';
 
@@ -9,8 +9,9 @@ import { NotesService, Note } from '../services/notes.service';
   templateUrl: './qso-pane.html',
   styleUrl: './qso-pane.css',
 })
-export class QsoPane implements OnInit {
+export class QsoPane implements OnInit, OnDestroy {
   private notesService = inject(NotesService);
+  private refreshInterval?: ReturnType<typeof setInterval>;
 
   notes: Note[] = [];
   loading = true;
@@ -18,6 +19,17 @@ export class QsoPane implements OnInit {
 
   ngOnInit(): void {
     this.loadNotes();
+    // Auto-refresh every 15 seconds
+    this.refreshInterval = setInterval(() => {
+      this.loadNotes();
+    }, 15000);
+  }
+
+  ngOnDestroy(): void {
+    // Clean up interval to prevent memory leaks
+    if (this.refreshInterval) {
+      clearInterval(this.refreshInterval);
+    }
   }
 
   loadNotes(): void {
