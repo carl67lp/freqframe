@@ -1,69 +1,93 @@
 services:
-  freqframe-api:
-    build:
-      context: .
-      dockerfile: Dockerfile.api
-    container_name: freqframe-api
-    restart: unless-stopped
-    environment:
-      NODE_ENV: production
-      CALDAV_USERNAME: ${CALDAV_USERNAME}
-      CALDAV_PASSWORD: ${CALDAV_PASSWORD}
-    volumes:
-      # Mount your production calendars config
-      - ./apps/freqframe-api/src/app/config/calendars.production.yaml:/app/config/calendars.production.yaml:ro
-    expose:
-      - "3000"
-    networks:
-      - freqframe-network
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+    freqframe-api:
+        build:
+            context: .
+            dockerfile: Dockerfile.api
+        container_name: freqframe-api
+        restart: unless-stopped
+        environment:
+            NODE_ENV: production
+            CALDAV_USERNAME: ${CALDAV_USERNAME}
+            CALDAV_PASSWORD: ${CALDAV_PASSWORD}
+        volumes:
+            # Mount your production calendars config
+            - ./apps/freqframe-api/src/app/config/calendars.production.yaml:/app/config/calendars.production.yaml:ro
+        expose:
+            - '3000'
+        networks:
+            - freqframe-network
+        healthcheck:
+            test:
+                [
+                    'CMD',
+                    'wget',
+                    '--quiet',
+                    '--tries=1',
+                    '--spider',
+                    'http://localhost:3000/api',
+                ]
+            interval: 30s
+            timeout: 10s
+            retries: 3
+            start_period: 40s
 
-  freqframe-ui:
-    build:
-      context: .
-      dockerfile: Dockerfile.ui
-    container_name: freqframe-ui
-    restart: unless-stopped
-    expose:
-      - "4200"
-    networks:
-      - freqframe-network
-    depends_on:
-      - freqframe-api
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:4200/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+    freqframe-ui:
+        build:
+            context: .
+            dockerfile: Dockerfile.ui
+        container_name: freqframe-ui
+        restart: unless-stopped
+        expose:
+            - '4200'
+        networks:
+            - freqframe-network
+        depends_on:
+            - freqframe-api
+        healthcheck:
+            test:
+                [
+                    'CMD',
+                    'wget',
+                    '--quiet',
+                    '--tries=1',
+                    '--spider',
+                    'http://localhost:4200/',
+                ]
+            interval: 30s
+            timeout: 10s
+            retries: 3
+            start_period: 40s
 
-  nginx:
-    image: nginx:alpine
-    container_name: freqframe-proxy
-    restart: unless-stopped
-    ports:
-      - "8080:80"
-      - "8443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./certs:/etc/nginx/certs:ro
-    depends_on:
-      - freqframe-api
-      - freqframe-ui
-    networks:
-      - freqframe-network
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "https://localhost/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+    nginx:
+        image: nginx:alpine
+        container_name: freqframe-proxy
+        restart: unless-stopped
+        ports:
+            - '8080:80'
+            - '8443:443'
+        volumes:
+            - ./nginx.conf:/etc/nginx/nginx.conf:ro
+            - ./certs:/etc/nginx/certs:ro
+        depends_on:
+            - freqframe-api
+            - freqframe-ui
+        networks:
+            - freqframe-network
+        healthcheck:
+            test:
+                [
+                    'CMD',
+                    'wget',
+                    '--quiet',
+                    '--tries=1',
+                    '--spider',
+                    'http://localhost:80/',
+                ]
+            interval: 30s
+            timeout: 10s
+            retries: 3
+            start_period: 40s
 
 networks:
-  freqframe-network:
-    driver: bridge
+    freqframe-network:
+        driver: bridge
