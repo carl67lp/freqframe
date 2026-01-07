@@ -4,15 +4,15 @@
 
 export const environment = {
   production: true,
-  apiBaseUrl: '',  // Empty string means use relative path (current origin)
+  apiBaseUrl: '', // Empty string means use relative path (current origin)
+  apiKey: 'change-me-in-production',
   weatherApi: {
     baseUrl: 'https://api.weather.com/v2/pws/observations/current',
     stationId: 'WEATHER_STATION_ID_REDACTED',
     apiKey: 'WEATHER_API_KEY_REDACTED',
   },
   solarApi: {
-    baseUrl:
-      'https://services.swpc.noaa.gov/json/solar-indices/27-day-outlook.json',
+    baseUrl: 'https://services.swpc.noaa.gov/json/solar-indices/27-day-outlook.json',
   },
   bandConditionsApi: {
     baseUrl: 'https://www.hamqsl.com/solar.html',

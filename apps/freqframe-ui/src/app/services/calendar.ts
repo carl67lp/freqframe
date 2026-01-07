@@ -1,12 +1,12 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { CalendarEvent } from '@freqframe/shared-types';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class CalendarService {
   private http = inject(HttpClient);
   // Use relative path if in production (detected by hostname), otherwise use localhost
@@ -22,10 +22,16 @@ export class CalendarService {
       params = params.set('endDate', endDate.toISOString());
     }
 
+    const headers = new HttpHeaders({
+      'X-Api-Key': environment.apiKey,
+    });
+
     return this.http
-      .get<{ status: number; events: CalendarEvent[] }>(this.url, { params })
-      .pipe(map((response) => {
-        return response.events;
-      }));
+      .get<{ status: number; events: CalendarEvent[] }>(this.url, { params, headers })
+      .pipe(
+        map((response) => {
+          return response.events;
+        })
+      );
   }
 }

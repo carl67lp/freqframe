@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface Note {
   id: string;
@@ -19,7 +20,10 @@ export class NotesService {
   private apiUrl = '/api/notes';
 
   getNotes(): Observable<Note[]> {
-    return this.http.get<Note[]>(this.apiUrl).pipe(
+    const headers = new HttpHeaders({
+      'X-Api-Key': environment.apiKey,
+    });
+    return this.http.get<Note[]>(this.apiUrl, { headers }).pipe(
       // Sort by createdAt, most recent first
       map((notes) =>
         notes.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
@@ -28,6 +32,9 @@ export class NotesService {
   }
 
   deleteNote(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    const headers = new HttpHeaders({
+      'X-Api-Key': environment.apiKey,
+    });
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers });
   }
 }
