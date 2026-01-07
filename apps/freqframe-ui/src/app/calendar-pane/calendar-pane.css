@@ -61,6 +61,7 @@
 .event-item {
   padding: 1rem;
   border-left: 3px solid #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.3);
   background: linear-gradient(90deg, rgba(74, 222, 128, 0.08), transparent);
   border-radius: 0.3rem;
   transition: all 0.2s;
