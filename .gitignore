@@ -50,3 +50,6 @@ apps/freqframe-api/.env.production
 apps/freqframe-api/src/app/config/calendars.development.yaml
 apps/freqframe-api/src/app/config/calendars.production.yaml
 apps/freqframe-ui/src/environments/environment.ts
+
+# Data directory - database files
+data/
