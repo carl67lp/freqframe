@@ -9,12 +9,15 @@ export const environment = {
   weatherApi: {
     baseUrl: 'https://api.weather.com/v2/pws/observations/current',
     stationId: 'YOUR_STATION_ID',
+    geocode: 'LAT,LON',
     apiKey: 'YOUR_WEATHER_API_KEY',
   },
   solarApi: {
     baseUrl: 'https://services.swpc.noaa.gov/json/solar-indices/27-day-outlook.json',
   },
-  bandConditionsApi: {
-    baseUrl: 'https://www.hamqsl.com/solar.html',
+  radar: {
+    lat: 0,
+    lon: 0,
+    zoom: 7,
   },
 };
