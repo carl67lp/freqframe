@@ -13,8 +13,6 @@ services:
         volumes:
             # Mount your production calendars config
             - ./apps/freqframe-api/src/app/config/calendars.production.yaml:/app/config/calendars.production.yaml:ro
-            # Persist the database
-            - ./data/db:/app/db
         expose:
             - '3000'
         networks:

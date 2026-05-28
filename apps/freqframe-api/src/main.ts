@@ -25,6 +25,7 @@ async function bootstrap() {
             if (
                 origin.includes('homelab.local') ||
                 origin.includes('homedashboard.local') ||
+                origin.includes('dashboard.home') ||
                 origin.includes('192.168')
             ) {
                 callback(null, true);

@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable, shareReplay } from 'rxjs';
+import { Observable, Observer, shareReplay } from 'rxjs';
 import { CalendarService } from '../services/calendar';
 import { CalendarEvent } from '@freqframe/shared-types';
 
@@ -19,7 +19,6 @@ interface GroupedEvent {
 export class CalendarPane {
   private calendarService = inject(CalendarService);
   private readonly calendarRefreshInterval = 30 * (60 * 1000); // 30 minutes
-  readonly currentDate = new Date();
   lastUpdated: Date | null = null;
 
   readonly groupedEvents$ = new Observable<GroupedEvent[]>((observer) => {
@@ -33,7 +32,7 @@ export class CalendarPane {
     return () => clearInterval(refreshInterval);
   }).pipe(shareReplay(1));
 
-  private fetchAndGroupEvents(observer: any) {
+  private fetchAndGroupEvents(observer: Observer<GroupedEvent[]>) {
     if (observer.closed) {
       return;
     }
@@ -45,13 +44,16 @@ export class CalendarPane {
         this.lastUpdated = new Date();
         observer.next(grouped);
       },
-      error: (error) => observer.error(error),
+      error: (error) => {
+        // Log but don't propagate — propagating kills the outer Observable and stops polling.
+        console.error('Calendar fetch error:', error);
+      },
     });
   }
 
   private groupEventsByDate(events: CalendarEvent[]): GroupedEvent[] {
     const grouped = new Map<string, { events: CalendarEvent[]; sortKey: string }>();
-    const today = new Date(this.currentDate);
+    const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     for (const event of events) {
@@ -101,7 +103,4 @@ export class CalendarPane {
     return { label, sortKey: isoDate };
   }
 
-  onRefresh() {
-    // TODO: add refresh method to service when needed
-  }
 }
