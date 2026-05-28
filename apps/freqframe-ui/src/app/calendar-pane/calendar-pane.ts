@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable, Observer, shareReplay } from 'rxjs';
+import { Observable, shareReplay, Subscriber } from 'rxjs';
 import { CalendarService } from '../services/calendar';
 import { CalendarEvent } from '@freqframe/shared-types';
 
@@ -32,7 +32,7 @@ export class CalendarPane {
     return () => clearInterval(refreshInterval);
   }).pipe(shareReplay(1));
 
-  private fetchAndGroupEvents(observer: Observer<GroupedEvent[]>) {
+  private fetchAndGroupEvents(observer: Subscriber<GroupedEvent[]>) {
     if (observer.closed) {
       return;
     }
