@@ -24,6 +24,8 @@ interface RainViewerResponse {
   };
 }
 
+const RADAR_OPACITY = 0.65;
+
 @Component({
   selector: 'app-radar-pane',
   standalone: true,
@@ -76,11 +78,19 @@ export class RadarPane implements AfterViewInit, OnDestroy {
 
         this.radarLayers = this.animFrames.map((frame) =>
           L.tileLayer(`${host}${frame.path}/512/{z}/{x}/{y}/2/1_1.png`, {
-            opacity: 0.65,
+            opacity: 0,
             tileSize: 512,
             zIndex: 10,
           })
         );
+
+        // Add every frame layer up front (hidden via opacity 0) so each frame's
+        // tiles are fetched from RainViewer exactly once. Animating by
+        // add/removeLayer instead forces Leaflet to re-fetch a frame's tiles
+        // every time it comes back around, which is what was tripping
+        // RainViewer's rate limiting on a display that runs the animation
+        // continuously for hours.
+        this.radarLayers.forEach((layer) => layer.addTo(this.map!));
 
         this.isLoading = false;
         this.showFrame(this.animFrames.length - 1);
@@ -98,11 +108,11 @@ export class RadarPane implements AfterViewInit, OnDestroy {
     if (!this.map || this.radarLayers.length === 0) return;
 
     if (this.radarLayers[this.currentFrameIndex]) {
-      this.map.removeLayer(this.radarLayers[this.currentFrameIndex]);
+      this.radarLayers[this.currentFrameIndex].setOpacity(0);
     }
 
     this.currentFrameIndex = index;
-    this.radarLayers[index].addTo(this.map);
+    this.radarLayers[index].setOpacity(RADAR_OPACITY);
     this.frameTime = new Date(this.animFrames[index].time * 1000);
   }
 
