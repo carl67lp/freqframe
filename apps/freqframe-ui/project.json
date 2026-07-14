@@ -36,7 +36,13 @@
               "maximumError": "8kb"
             }
           ],
-          "outputHashing": "all"
+          "outputHashing": "all",
+          "fileReplacements": [
+            {
+              "replace": "apps/freqframe-ui/src/environments/environment.ts",
+              "with": "apps/freqframe-ui/src/environments/environment.prod.ts"
+            }
+          ]
         },
         "development": {
           "optimization": false,
