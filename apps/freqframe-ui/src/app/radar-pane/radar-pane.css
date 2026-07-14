@@ -1,0 +1,41 @@
+.radar-pane-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  flex-shrink: 0;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.frame-time {
+  font-size: 0.8rem;
+  color: var(--muted-color);
+}
+
+.status-message {
+  font-size: 0.9rem;
+  color: var(--muted-color);
+  padding: 0.5rem 0;
+}
+
+.status-message.error {
+  color: #f87171;
+}
+
+.radar-map {
+  flex: 1;
+  min-height: 0;
+  border-radius: 0.375rem;
+  overflow: hidden;
+}

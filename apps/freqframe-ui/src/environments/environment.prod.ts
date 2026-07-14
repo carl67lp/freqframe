@@ -14,7 +14,9 @@ export const environment = {
   solarApi: {
     baseUrl: 'https://services.swpc.noaa.gov/json/solar-indices/27-day-outlook.json',
   },
-  bandConditionsApi: {
-    baseUrl: 'https://www.hamqsl.com/solar.html',
+  radar: {
+    lat: 42.037,
+    lon: -83.341,
+    zoom: 7,
   },
 };

@@ -33,7 +33,6 @@ export class WeatherDataService {
     // Fetch both current conditions and forecast in parallel
     return this.http.get<any>(this.pwsApiUrl).pipe(
       switchMap((pwsData: any) => {
-        console.log('PWS API response:', pwsData);
         if (!pwsData || !pwsData.observations || !pwsData.observations[0]) {
           throw new Error('Invalid PWS API response structure');
         }
@@ -57,8 +56,6 @@ export class WeatherDataService {
         // Now fetch forecast data
         return this.http.get<any>(this.forecastApiUrl).pipe(
           map((forecastData: any) => {
-            console.log('Forecast API response:', forecastData);
-            
             // Extract today and tomorrow forecast
             const result: WeatherData = {
               ...currentConditions,
