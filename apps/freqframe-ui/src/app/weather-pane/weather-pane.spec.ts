@@ -51,4 +51,31 @@ describe('WeatherPane', () => {
     expect(dateElement).toBeTruthy();
     expect(dateElement?.textContent).toContain(new Date().getFullYear().toString());
   });
+
+  describe('getWeatherIcon', () => {
+    it('should map icon code 0 rather than reporting it as unknown', () => {
+      // 0 is tornado; a falsy check used to render it as the unknown glyph.
+      expect(component.getWeatherIcon(0)).toBe('🌪️');
+    });
+
+    it('should report a missing icon code as unknown', () => {
+      expect(component.getWeatherIcon(undefined)).toBe('❓');
+    });
+  });
+
+  describe('bearingToDirection', () => {
+    it.each([
+      [0, 'N'],
+      [90, 'E'],
+      [180, 'S'],
+      [270, 'W'],
+      [350, 'N'],
+    ])('should map %i° to %s', (deg, expected) => {
+      expect(component.bearingToDirection(deg)).toBe(expected);
+    });
+
+    it('should not index the table with NaN when direction is missing', () => {
+      expect(component.bearingToDirection(undefined)).toBe('--');
+    });
+  });
 });

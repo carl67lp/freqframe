@@ -81,26 +81,38 @@ export class CalendarPane {
 
   private getDateLabel(eventDate: Date, today: Date): { label: string; sortKey: string } {
     const diffTime = eventDate.getTime() - today.getTime();
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    const isoDate = eventDate.toISOString().split('T')[0]; // YYYY-MM-DD
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+    // The label varies with how near the date is, but the sort key is always
+    // the calendar date. Mixing relative keys ('0-today') with ISO keys sorted
+    // any date before today — an event still in progress — below every other
+    // group, because '2026-07-22' string-compares after '2-03-Friday'.
+    const sortKey = toLocalIsoDate(eventDate);
 
-    if (diffDays === 0) return { label: 'Today', sortKey: '0-today' };
-    if (diffDays === 1) return { label: 'Tomorrow', sortKey: '1-tomorrow' };
+    if (diffDays === 0) return { label: 'Today', sortKey };
+    if (diffDays === 1) return { label: 'Tomorrow', sortKey };
 
     // Within one week, show day of week
     if (diffDays > 1 && diffDays < 7) {
-      const dayName = eventDate.toLocaleDateString('en-US', { weekday: 'long' });
-      const sortKey = `2-${diffDays.toString().padStart(2, '0')}-${dayName}`;
-      return { label: dayName, sortKey };
+      return { label: eventDate.toLocaleDateString('en-US', { weekday: 'long' }), sortKey };
     }
 
-    // Beyond one week, show full date with ISO key for proper sorting
+    // Beyond one week (or already past), show the full date
     const label = eventDate.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
     });
-    return { label, sortKey: isoDate };
+    return { label, sortKey };
   }
+}
 
+/**
+ * YYYY-MM-DD for the date as it reads on a local wall calendar. `toISOString`
+ * would convert local midnight to UTC and land on the previous day for any
+ * timezone east of Greenwich.
+ */
+function toLocalIsoDate(date: Date): string {
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+  return `${date.getFullYear()}-${month}-${day}`;
 }

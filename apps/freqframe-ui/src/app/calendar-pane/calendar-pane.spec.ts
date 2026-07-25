@@ -39,9 +39,9 @@ describe('CalendarPane', () => {
       eventDate.setHours(0, 0, 0, 0);
       
       const result = (component as any).getDateLabel(eventDate, today);
-      
+
       expect(result.label).toBe('Today');
-      expect(result.sortKey).toBe('0-today');
+      expect(result.sortKey).toBe('2025-12-20');
     });
 
     it('should label tomorrow as "Tomorrow"', () => {
@@ -51,7 +51,7 @@ describe('CalendarPane', () => {
       const result = (component as any).getDateLabel(eventDate, today);
       
       expect(result.label).toBe('Tomorrow');
-      expect(result.sortKey).toBe('1-tomorrow');
+      expect(result.sortKey).toBe('2025-12-21');
     });
 
     it('should label days within one week as day name', () => {
@@ -61,7 +61,7 @@ describe('CalendarPane', () => {
       const result = (component as any).getDateLabel(eventDate, today);
       
       expect(result.label).toBe('Monday');
-      expect(result.sortKey).toContain('2-02');
+      expect(result.sortKey).toBe('2025-12-22');
     });
 
     it('should label dates beyond one week as full date', () => {
@@ -73,15 +73,32 @@ describe('CalendarPane', () => {
       expect(result.label).toMatch(/Dec.*28.*2025/);
       expect(result.sortKey).toBe('2025-12-28');
     });
+
+    it('should sort an already-started date ahead of later ones', () => {
+      const yesterday = new Date(2025, 11, 19);
+      yesterday.setHours(0, 0, 0, 0);
+      const nextWeek = new Date(2025, 11, 28);
+      nextWeek.setHours(0, 0, 0, 0);
+
+      const past = (component as any).getDateLabel(yesterday, today);
+      const future = (component as any).getDateLabel(nextWeek, today);
+
+      expect(past.sortKey.localeCompare(future.sortKey)).toBeLessThan(0);
+    });
   });
 
   describe('groupEventsByDate', () => {
-    let today: Date;
+    const today = new Date(2025, 11, 20); // Dec 20, 2025
 
     beforeEach(() => {
-      today = new Date(2025, 11, 20); // Dec 20, 2025
-      today.setHours(0, 0, 0, 0);
-      (component as any).currentDate = today;
+      // groupEventsByDate reads `new Date()` for "today", so pin the clock
+      // rather than trying to inject a date the component does not accept.
+      jest.useFakeTimers({ doNotFake: ['nextTick', 'queueMicrotask'] });
+      jest.setSystemTime(today);
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
     });
 
     it('should group events by date', () => {

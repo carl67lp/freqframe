@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, NgZone, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { WeatherDataService, WeatherData } from '../services/weather-data';
 import { Observable } from 'rxjs';
@@ -10,16 +10,29 @@ import { Observable } from 'rxjs';
   templateUrl: './weather-pane.html',
   styleUrl: './weather-pane.css',
 })
-export class WeatherPane {
+export class WeatherPane implements OnDestroy {
   private weatherService = inject(WeatherDataService);
   weatherData$: Observable<WeatherData> = this.weatherService.getWeatherAutoRefresh();
   currentDate = signal(new Date());
 
+  private zone = inject(NgZone);
+  private clockTimer!: ReturnType<typeof setInterval>;
+
   constructor() {
-    // Update current date every second
-    setInterval(() => {
-      this.currentDate.set(new Date());
-    }, 1000);
+    // Update current date every second. Kept outside the Angular zone: a
+    // perpetual 1Hz timer inside it schedules an app-wide change detection
+    // every second and leaves the app permanently "unstable", which is why
+    // anything awaiting whenStable() used to hang. Setting the signal still
+    // refreshes the view on its own.
+    this.zone.runOutsideAngular(() => {
+      this.clockTimer = setInterval(() => {
+        this.currentDate.set(new Date());
+      }, 1000);
+    });
+  }
+
+  ngOnDestroy(): void {
+    clearInterval(this.clockTimer);
   }
 
   DIRECTIONS = [
@@ -41,13 +54,16 @@ export class WeatherPane {
     'NNW',
   ];
 
-  bearingToDirection(deg: number): string {
-    const index = Math.floor((deg + 11.25) / 22.5) % 16;
+  bearingToDirection(deg: number | undefined): string {
+    // A missing wind direction otherwise indexes the array with NaN.
+    if (deg == null || Number.isNaN(deg)) return '--';
+    const index = Math.floor(((((deg % 360) + 360) % 360) + 11.25) / 22.5) % 16;
     return this.DIRECTIONS[index];
   }
 
   getWeatherIcon(iconCode: number | undefined): string {
-    if (!iconCode) return '❓';
+    // Guard on null/undefined only — 0 is a valid icon code (tornado).
+    if (iconCode == null) return '❓';
 
     // Map Weather.com icon codes to emoji
     // Based on: https://docs.dtn.com/api/tables/icon-code-weather-forecast-icon-code/

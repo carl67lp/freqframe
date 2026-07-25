@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { parseStringPromise } from 'xml2js';
 import { CalendarEvent } from '@freqframe/shared-types';
@@ -12,6 +12,7 @@ type CalendarsConfig = Record<string, CalendarConfig>;
 
 @Injectable()
 export class CaldavService {
+  private readonly logger = new Logger(CaldavService.name);
   private readonly calendars: CalendarsConfig;
   private readonly username: string;
   private readonly password: string;
@@ -34,7 +35,7 @@ export class CaldavService {
     startDate?: Date, endDate?: Date
   ): Promise<{ status: number; events: CalendarEvent[] }> {
     try {
-      console.log(`Fetching calendar events for '${calendarName}' from CalDAV service...`);
+      this.logger.log({ action: 'caldav_fetch', calendar: calendarName });
       // Fetch raw calendar multistatus XML from service
       const { status, body } = await this.getRawXmlData(calendarName, {
         startDate: startDate ? new Date(startDate) : undefined,
@@ -86,7 +87,12 @@ export class CaldavService {
           if (!rrule) {
             // Non-recurring event
             const startTime = event.startDate.toJSDate();
-            if (startTime >= expandStartDate && startTime <= expandEndDate) {
+            const endTime = event.endDate?.toJSDate() ?? startTime;
+            // Keep anything overlapping the window rather than anything
+            // *starting* in it: the window starts at "now", so filtering on
+            // start time dropped every all-day event for today (they begin at
+            // midnight) and every meeting already in progress.
+            if (endTime >= expandStartDate && startTime <= expandEndDate) {
               events.push({
                 id: event.uid,
                 title: event.summary || 'Untitled',
@@ -106,14 +112,16 @@ export class CaldavService {
             while (occurrence) {
               const occStart = occurrence.toJSDate();
               if (occStart > expandEndDate) break; // Stop if past end date
-              
-              if (occStart >= expandStartDate) {
-                const occEnd = occurrence.clone();
-                if (event.endDate) {
-                  const duration = event.endDate.toJSDate().getTime() - event.startDate.toJSDate().getTime();
-                  occEnd.addDuration(ICAL.Duration.fromSeconds(Math.floor(duration / 1000)));
-                }
 
+              const occEnd = occurrence.clone();
+              if (event.endDate) {
+                const duration = event.endDate.toJSDate().getTime() - event.startDate.toJSDate().getTime();
+                occEnd.addDuration(ICAL.Duration.fromSeconds(Math.floor(duration / 1000)));
+              }
+
+              // Overlap test, matching the non-recurring branch above, so a
+              // recurrence that is under way right now is still reported.
+              if (occEnd.toJSDate() >= expandStartDate) {
                 events.push({
                   id: `${event.uid}-${occStart.getTime()}`,
                   title: event.summary || 'Untitled',
@@ -131,7 +139,7 @@ export class CaldavService {
             }
           }
         } catch (parseError) {
-          console.warn(`Failed to parse/expand ICS block: ${parseError}`);
+          this.logger.warn(`Failed to parse/expand ICS block: ${parseError}`);
           // Continue with next ICS block instead of failing
         }
       }
@@ -141,7 +149,7 @@ export class CaldavService {
 
       return { status, events };
     } catch (error) {
-      console.error('Calendar parse error:', error);
+      this.logger.error('Calendar parse error:', error);
       throw new HttpException(
         `Failed to fetch or parse calendar data: ${error}`,
         HttpStatus.INTERNAL_SERVER_ERROR

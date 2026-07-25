@@ -419,5 +419,103 @@ END:VCALENDAR</calendar-data>
       expect(result.events[0].title).toBe('Valid Event');
     });
   });
+
+  describe('window filtering', () => {
+    const wrapIcs = (vevent: string) => `<?xml version="1.0" encoding="utf-8"?>
+<multistatus xmlns="DAV:">
+  <response>
+    <propstat>
+      <prop>
+        <calendar-data>BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Test//EN
+${vevent}
+END:VCALENDAR</calendar-data>
+      </prop>
+    </propstat>
+  </response>
+</multistatus>`;
+
+    const fetchReturning = (vevent: string) =>
+      jest.spyOn(global, 'fetch' as any).mockResolvedValueOnce({
+        status: 207,
+        text: jest.fn().mockResolvedValue(wrapIcs(vevent)),
+      });
+
+    // The dashboard asks for events from "now", so anything that began earlier
+    // today must still come back or it vanishes from the pane at midnight.
+    const noon = new Date('2025-01-01T12:00:00Z');
+    const later = new Date('2025-01-31T00:00:00Z');
+
+    it("should include today's all-day event when the window starts mid-day", async () => {
+      fetchReturning(`BEGIN:VEVENT
+UID:allday-today
+DTSTART;VALUE=DATE:20250101
+DTEND;VALUE=DATE:20250102
+SUMMARY:New Year's Day
+END:VEVENT`);
+
+      const result = await service.getCalendarEvents('Alice', noon, later);
+
+      expect(result.events.map((e) => e.title)).toEqual(["New Year's Day"]);
+    });
+
+    it('should include a timed event already in progress', async () => {
+      fetchReturning(`BEGIN:VEVENT
+UID:in-progress
+DTSTART:20250101T090000Z
+DTEND:20250101T170000Z
+SUMMARY:All Day Offsite
+END:VEVENT`);
+
+      const result = await service.getCalendarEvents('Alice', noon, later);
+
+      expect(result.events.map((e) => e.title)).toEqual(['All Day Offsite']);
+    });
+
+    it('should exclude an event that already ended', async () => {
+      fetchReturning(`BEGIN:VEVENT
+UID:finished
+DTSTART:20250101T080000Z
+DTEND:20250101T090000Z
+SUMMARY:Finished Standup
+END:VEVENT`);
+
+      const result = await service.getCalendarEvents('Alice', noon, later);
+
+      expect(result.events).toEqual([]);
+    });
+
+    it('should include a recurring occurrence already in progress', async () => {
+      fetchReturning(`BEGIN:VEVENT
+UID:recurring
+DTSTART:20250101T090000Z
+DTEND:20250101T170000Z
+RRULE:FREQ=DAILY;COUNT=5
+SUMMARY:Daily Shift
+END:VEVENT`);
+
+      const result = await service.getCalendarEvents('Alice', noon, later);
+
+      expect(result.events.length).toBe(5);
+      expect(result.events[0].start).toBe('2025-01-01T09:00:00.000Z');
+    });
+
+    it('should exclude recurring occurrences that finished before the window', async () => {
+      fetchReturning(`BEGIN:VEVENT
+UID:recurring-past
+DTSTART:20241230T090000Z
+DTEND:20241230T100000Z
+RRULE:FREQ=DAILY;COUNT=5
+SUMMARY:Morning Standup
+END:VEVENT`);
+
+      const result = await service.getCalendarEvents('Alice', noon, later);
+
+      // Dec 30, Dec 31 and Jan 1 (ended 10:00) are all over by noon on Jan 1.
+      expect(result.events.length).toBe(2);
+      expect(result.events[0].start).toBe('2025-01-02T09:00:00.000Z');
+    });
+  });
 });
 

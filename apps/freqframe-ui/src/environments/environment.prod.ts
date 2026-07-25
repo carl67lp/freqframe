@@ -9,6 +9,8 @@ export const environment = {
   weatherApi: {
     baseUrl: 'https://api.weather.com/v2/pws/observations/current',
     stationId: 'WEATHER_STATION_ID_REDACTED',
+    // Required by the daily forecast call — "lat,lon", e.g. '42.0367,-83.3411'.
+    geocode: 'WEATHER_GEOCODE_REDACTED',
     apiKey: 'WEATHER_API_KEY_REDACTED',
   },
   solarApi: {

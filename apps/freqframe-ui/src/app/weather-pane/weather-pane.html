@@ -2,17 +2,24 @@
   <h2>{{ currentDate() | date : 'EEEE, MMMM d, yyyy' }}</h2>
 
   @if (weatherData$ | async; as weatherData) {
+  @if (weatherData.unavailable) {
+  <p>Weather data unavailable.</p>
+  } @else {
 
-  <!-- Current Conditions - Prominent Display -->
-  @if (weatherData.todayCondition) {
+  <!-- Current Conditions - Prominent Display. Rendered from the PWS reading
+       alone, so a forecast outage cannot blank out the whole pane. -->
   <div class="current-conditions">
     <div class="condition-main">
       <div class="condition-left">
+        @if (weatherData.todayIconCode !== undefined) {
         <div class="weather-icon-large">{{ getWeatherIcon(weatherData.todayIconCode) }}</div>
+        }
         <div class="temp-large">{{ weatherData.temperature }}<span class="unit">°F</span></div>
+        @if (weatherData.todayCondition) {
         <div class="condition-text">{{ weatherData.todayCondition }}</div>
+        }
         <div class="feels-like">Feels like {{ weatherData.feelsLike }}°</div>
-        @if (weatherData.todayHigh && weatherData.todayLow) {
+        @if (weatherData.todayHigh !== undefined && weatherData.todayLow !== undefined) {
         <div class="high-low">H: {{ weatherData.todayHigh }}° L: {{ weatherData.todayLow }}°</div>
         }
       </div>
@@ -33,7 +40,6 @@
       </div>
     </div>
   </div>
-  }
 
   <!-- Forecast - Tomorrow -->
   @if (weatherData.tomorrowCondition) {
@@ -41,13 +47,16 @@
     <div class="forecast-label">Tomorrow</div>
     <div class="weather-icon-small">{{ getWeatherIcon(weatherData.tomorrowIconCode) }}</div>
     <div class="forecast-condition">{{ weatherData.tomorrowCondition }}</div>
-    @if (weatherData.tomorrowHigh && weatherData.tomorrowLow) {
+    @if (weatherData.tomorrowHigh !== undefined && weatherData.tomorrowLow !== undefined) {
     <div class="forecast-temps">
       {{ weatherData.tomorrowHigh }}° / {{ weatherData.tomorrowLow }}°
     </div>
     }
   </div>
-  } } @else {
+  }
+
+  }
+  } @else {
   <p>Loading weather data...</p>
   }
 </div>

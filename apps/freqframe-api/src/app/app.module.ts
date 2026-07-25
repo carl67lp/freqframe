@@ -11,7 +11,13 @@ import { CaldavService } from './services/calendar/caldav';
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
-            envFilePath: ['apps/api/.env.development', 'apps/api/.env'],
+            // The app lives at apps/freqframe-api; the old 'apps/api/...' paths
+            // never resolved, so these files were silently ignored.
+            envFilePath: [
+                'apps/freqframe-api/.env.development',
+                'apps/freqframe-api/.env',
+                '.env',
+            ],
             load: [calendarsConfig],
         }),
     ],

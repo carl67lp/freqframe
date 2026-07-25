@@ -1,9 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map, catchError, of, interval, switchMap, startWith, forkJoin } from 'rxjs';
+import { Observable, map, catchError, of, interval, switchMap, startWith } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface WeatherData {
+  /** Set when current conditions could not be fetched; no readings are present. */
+  unavailable?: boolean;
   temperature: number;
   feelsLike: number;
   humidity: number;
@@ -57,18 +59,27 @@ export class WeatherDataService {
         return this.http.get<any>(this.forecastApiUrl).pipe(
           map((forecastData: any) => {
             // Extract today and tomorrow forecast
+            // daypart[0] arrays alternate day/night starting with today's
+            // daytime, which the API nulls out once the day period has passed —
+            // hence the fall back to today's night entry. Use ?? rather than ||
+            // so that icon code 0 (tornado) is not treated as "missing".
+            const daypart = forecastData.daypart?.[0];
+            // The API returns null for periods that have passed; normalise to
+            // undefined so the declared `number | undefined` type holds and the
+            // template can test for presence without a null check too.
+            const opt = <T,>(value: T | null | undefined): T | undefined => value ?? undefined;
             const result: WeatherData = {
               ...currentConditions,
-              todayCondition: forecastData.daypart?.[0]?.wxPhraseShort?.[0] || forecastData.daypart?.[0]?.wxPhraseShort?.[1],
-              todayIconCode: forecastData.daypart?.[0]?.iconCode?.[0] || forecastData.daypart?.[0]?.iconCode?.[1],
-              todayHigh: forecastData.temperatureMax?.[0],
-              todayLow: forecastData.temperatureMin?.[0],
-              tomorrowCondition: forecastData.daypart?.[0]?.wxPhraseShort?.[2],
-              tomorrowIconCode: forecastData.daypart?.[0]?.iconCode?.[2],
-              tomorrowHigh: forecastData.temperatureMax?.[1],
-              tomorrowLow: forecastData.temperatureMin?.[1],
+              todayCondition: opt(daypart?.wxPhraseShort?.[0] ?? daypart?.wxPhraseShort?.[1]),
+              todayIconCode: opt(daypart?.iconCode?.[0] ?? daypart?.iconCode?.[1]),
+              todayHigh: opt(forecastData.temperatureMax?.[0]),
+              todayLow: opt(forecastData.temperatureMin?.[0]),
+              tomorrowCondition: opt(daypart?.wxPhraseShort?.[2]),
+              tomorrowIconCode: opt(daypart?.iconCode?.[2]),
+              tomorrowHigh: opt(forecastData.temperatureMax?.[1]),
+              tomorrowLow: opt(forecastData.temperatureMin?.[1]),
             };
-            
+
             return result;
           }),
           catchError((forecastError) => {
@@ -80,8 +91,10 @@ export class WeatherDataService {
       }),
       catchError((error) => {
         console.error('Weather API error:', error);
-        // Return dummy data so pane doesn't crash
+        // Flag the failure rather than emitting zeros — on an always-on wall
+        // display a fabricated "0°F / 0% humidity" reads as real weather.
         return of({
+          unavailable: true,
           temperature: 0,
           feelsLike: 0,
           humidity: 0,
