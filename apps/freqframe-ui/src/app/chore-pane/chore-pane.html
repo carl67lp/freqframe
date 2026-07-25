@@ -32,21 +32,49 @@
   }
   <div class="c9-goal-caption">{{ goalCaption(board.month) }}</div>
 
-  <!-- What's still open, where the real money is -->
-  <div class="c9-section">
-    <div class="c9-section-title">Weekly Overtime</div>
-    @if (board.week.weekly_outstanding.length === 0) {
-    <div class="c9-all-clear">All weekly jobs done ✓</div>
-    } @else {
-    <ul class="c9-outstanding">
-      @for (job of board.week.weekly_outstanding; track job.id) {
-      <li>
-        <span class="c9-job-name">{{ job.name }}</span>
-        <span class="c9-price-tag">{{ money(job.price) }}</span>
-      </li>
+  <!-- Both job lists share one scroll area so they stay in proportion when the
+       pane is short, rather than fighting over the space with two scrollbars. -->
+  <div class="c9-jobs">
+    <!-- Weekly first: fewer of them, and where the real money is -->
+    <div class="c9-section">
+      <div class="c9-section-title">Weekly Overtime</div>
+      @if (board.week.weekly_outstanding.length === 0) {
+      <div class="c9-all-clear">All weekly jobs done ✓</div>
+      } @else {
+      <ul class="c9-outstanding">
+        @for (job of board.week.weekly_outstanding; track job.id) {
+        <li>
+          <span class="c9-job-name">{{ job.name }}</span>
+          <span class="c9-price-tag weekly">{{ money(job.price) }}</span>
+        </li>
+        }
+      </ul>
       }
-    </ul>
-    }
+    </div>
+
+    <!-- Every daily job, always available — the quick-hits menu -->
+    <div class="c9-section">
+      <div class="c9-section-title">Daily Shifts</div>
+      <ul class="c9-dailies">
+        @for (job of board.jobs.daily; track job.id) {
+        <li
+          [class.done-today]="countToday(board, job.id) > 0"
+          [class.bonus-job]="countsTowardBonus(board, job.id)"
+        >
+          <span class="c9-job-name">{{ job.name }}</span>
+          @if (countToday(board, job.id); as count) {
+          <span class="c9-count">{{ count }}×</span>
+          }
+          <span class="c9-price-tag daily">{{ money(job.price) }}</span>
+        </li>
+        }
+      </ul>
+      @if (!board.bonus.earned_this_week) {
+      <div class="c9-legend">
+        <span class="c9-legend-dot"></span> still needed for this week's bonus
+      </div>
+      }
+    </div>
   </div>
 
   <!-- Employee of the Month -->

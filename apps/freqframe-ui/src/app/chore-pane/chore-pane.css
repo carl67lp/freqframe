@@ -133,11 +133,20 @@
   margin-top: -0.2rem;
 }
 
-/* ---- Outstanding weekly work ---- */
+/* ---- Job lists ---- */
 
-.c9-section {
+/* One scroll area for both sections, so a short pane shrinks them together
+   instead of giving each its own scrollbar. */
+.c9-jobs {
   flex: 1;
   min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.c9-section {
   display: flex;
   flex-direction: column;
 }
@@ -166,9 +175,6 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  overflow-y: auto;
-  flex: 1;
-  min-height: 0;
 }
 
 .c9-outstanding li {
@@ -191,17 +197,81 @@
   white-space: nowrap;
 }
 
-/* The price tags from the phone board, punched hole and all. */
+/* Every daily job, always available. Two columns when there's width for it —
+   these are short labels and there are a lot of them. */
+.c9-dailies {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0 1rem;
+}
+
+.c9-dailies li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0;
+  min-width: 0;
+}
+
+.c9-dailies .c9-job-name {
+  flex: 1;
+}
+
+/* Logged at least once today. Dailies still pay out again, so this dims rather
+   than strikes through — it's "already banked", not "unavailable". */
+.c9-dailies li.done-today .c9-job-name {
+  opacity: 0.55;
+}
+
+.c9-count {
+  font-family: var(--c9-mono);
+  font-size: 0.68rem;
+  color: var(--c9-green);
+  flex-shrink: 0;
+}
+
+/* Marks the daily types still outstanding for Employee of the Month. */
+.c9-dailies li.bonus-job .c9-job-name::before {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--c9-yellow);
+  margin-right: 0.4rem;
+  vertical-align: middle;
+}
+
+.c9-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--c9-mono);
+  font-size: 0.62rem;
+  opacity: 0.5;
+  margin-top: 0.3rem;
+}
+
+.c9-legend-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--c9-yellow);
+  flex-shrink: 0;
+}
+
+/* The price tags from the phone board, punched hole and all. Yellow for daily
+   and red for weekly, matching the board on her phone. */
 .c9-price-tag {
   position: relative;
-  background: var(--c9-red);
-  color: #fff;
   font-family: var(--c9-mono);
   font-weight: 600;
   font-size: 0.72rem;
   padding: 0.15rem 0.5rem 0.15rem 0.7rem;
   border-radius: 3px;
-  border: 1px solid #a23434;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -215,8 +285,29 @@
   width: 6px;
   height: 6px;
   background: var(--c9-navy-deep);
-  border: 1px solid #a23434;
   border-radius: 50%;
+}
+
+.c9-price-tag.weekly {
+  background: var(--c9-red);
+  color: #fff;
+  border: 1px solid #a23434;
+}
+
+.c9-price-tag.weekly::before {
+  border: 1px solid #a23434;
+}
+
+.c9-price-tag.daily {
+  background: var(--c9-yellow);
+  color: #23262b;
+  border: 1px solid #b98800;
+  font-size: 0.68rem;
+  padding: 0.1rem 0.45rem 0.1rem 0.6rem;
+}
+
+.c9-price-tag.daily::before {
+  border: 1px solid #b98800;
 }
 
 .c9-all-clear {
@@ -289,5 +380,10 @@
 
   .c9-job-name {
     font-size: 0.92rem;
+  }
+
+  /* Eleven daily jobs is a long single column — split them once there's width. */
+  .c9-dailies {
+    grid-template-columns: 1fr 1fr;
   }
 }

@@ -36,6 +36,26 @@ export class ChorePane {
   }
 
   /**
+   * How many times a daily job has been logged today. Dailies pay out every
+   * time, so this is "already earned once", not "done and unavailable".
+   */
+  countToday(board: ChoreBoard, jobId: string): number {
+    return board.today.counts[jobId] ?? 0;
+  }
+
+  /**
+   * True while this daily job still counts toward Employee of the Month — the
+   * bonus needs every daily *type* logged at least once in the week, so these
+   * are the ones worth picking first.
+   */
+  countsTowardBonus(board: ChoreBoard, jobId: string): boolean {
+    if (board.bonus.earned_this_week) {
+      return false;
+    }
+    return board.bonus.daily_types_remaining.some((job) => job.id === jobId);
+  }
+
+  /**
    * Headline for the pace block. Deliberately plain — this is read from across
    * a room, and by a twelve-year-old.
    */

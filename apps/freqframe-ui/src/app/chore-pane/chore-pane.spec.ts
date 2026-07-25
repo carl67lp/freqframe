@@ -38,7 +38,15 @@ const board = (overrides: Partial<ChoreBoard> = {}): ChoreBoard =>
       weekly_remaining: [],
       steps_remaining: 3,
     },
-    jobs: { daily: [], weekly: [], bonus: { id: 'b', name: 'Bonus', price: 2 } },
+    jobs: {
+      daily: [
+        { id: 'fold_laundry', name: 'Fold laundry', price: 1 },
+        { id: 'load_dishwasher', name: 'Load dishwasher', price: 0.75 },
+        { id: 'clean_mirror', name: 'Clean bathroom mirror', price: 0.75 },
+      ],
+      weekly: [],
+      bonus: { id: 'b', name: 'Bonus', price: 2 },
+    },
     recent: [],
     last_activity: '2026-07-24T20:15:00',
     ...overrides,
@@ -100,6 +108,97 @@ describe('ChorePane', () => {
     );
 
     expect(text(fixture)).toContain('All weekly jobs done');
+  });
+
+  it('should list every daily chore as an available quick-hit', async () => {
+    const fixture = await mount(board());
+
+    const rendered = text(fixture);
+    // Dailies pay out repeatedly, so all of them stay on the board regardless
+    // of what has already been logged today.
+    expect(rendered).toContain('Fold laundry');
+    expect(rendered).toContain('Load dishwasher');
+    expect(rendered).toContain('Clean bathroom mirror');
+    expect(rendered).toContain('$0.75');
+  });
+
+  it('should keep a daily chore listed after it has been done today', async () => {
+    const fixture = await mount(
+      board({
+        today: { date: '2026-07-24', earned: 2, counts: { fold_laundry: 2 } },
+      })
+    );
+
+    const items = (fixture.nativeElement as HTMLElement).querySelectorAll(
+      '.c9-dailies li'
+    );
+    expect(items.length).toBe(3);
+    expect(text(fixture)).toContain('Fold laundry');
+  });
+
+  it("should show how many times a daily was logged today", async () => {
+    const fixture = await mount(
+      board({
+        today: { date: '2026-07-24', earned: 2, counts: { fold_laundry: 2 } },
+      })
+    );
+
+    const done = (fixture.nativeElement as HTMLElement).querySelector(
+      '.c9-dailies li.done-today'
+    );
+    expect(done).toBeTruthy();
+    expect(done?.textContent).toContain('Fold laundry');
+    expect(done?.textContent).toContain('2×');
+  });
+
+  it('should not show a count for a daily not yet done today', async () => {
+    const fixture = await mount(
+      board({ today: { date: '2026-07-24', earned: 0, counts: {} } })
+    );
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelectorAll('.c9-dailies li').length).toBe(3);
+    // A bare "0×" next to every untouched job would be noise.
+    expect(compiled.querySelectorAll('.c9-dailies li.done-today').length).toBe(0);
+    expect(compiled.querySelectorAll('.c9-count').length).toBe(0);
+  });
+
+  it('should mark the dailies still needed for the weekly bonus', async () => {
+    const fixture = await mount(
+      board({
+        bonus: {
+          ...board().bonus,
+          daily_types_remaining: [
+            { id: 'clean_mirror', name: 'Clean bathroom mirror', price: 0.75 },
+          ],
+        },
+      })
+    );
+
+    const flagged = (fixture.nativeElement as HTMLElement).querySelectorAll(
+      '.c9-dailies li.bonus-job'
+    );
+    expect(flagged.length).toBe(1);
+    expect(flagged[0].textContent).toContain('Clean bathroom mirror');
+    expect(text(fixture)).toContain("still needed for this week's bonus");
+  });
+
+  it('should drop the bonus markers once the bonus is earned', async () => {
+    const fixture = await mount(
+      board({
+        bonus: {
+          ...board().bonus,
+          earned_this_week: true,
+          daily_types_remaining: [
+            { id: 'clean_mirror', name: 'Clean bathroom mirror', price: 0.75 },
+          ],
+        },
+      })
+    );
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelectorAll('.c9-dailies li.bonus-job').length).toBe(0);
+    expect(text(fixture)).not.toContain("still needed for this week's bonus");
   });
 
   it('should show the unavailable state without inventing figures', async () => {
@@ -173,6 +272,59 @@ describe('ChorePane', () => {
 
     it('should place the marker at the elapsed fraction of the month', () => {
       expect(component.markerPercent(board().month)).toBe(77);
+    });
+  });
+
+  describe('countToday', () => {
+    let component: ChorePane;
+
+    beforeEach(async () => {
+      component = (await mount(board())).componentInstance;
+    });
+
+    it('should return the logged count', () => {
+      const withCounts = board({
+        today: { date: '2026-07-24', earned: 3, counts: { fold_laundry: 3 } },
+      });
+      expect(component.countToday(withCounts, 'fold_laundry')).toBe(3);
+    });
+
+    it('should return zero for a job with no entry today', () => {
+      expect(component.countToday(board(), 'clean_mirror')).toBe(0);
+    });
+  });
+
+  describe('countsTowardBonus', () => {
+    let component: ChorePane;
+
+    beforeEach(async () => {
+      component = (await mount(board())).componentInstance;
+    });
+
+    it('should be true while the job is still outstanding for the week', () => {
+      const b = board({
+        bonus: {
+          ...board().bonus,
+          daily_types_remaining: [
+            { id: 'clean_mirror', name: 'Clean bathroom mirror', price: 0.75 },
+          ],
+        },
+      });
+      expect(component.countsTowardBonus(b, 'clean_mirror')).toBe(true);
+      expect(component.countsTowardBonus(b, 'fold_laundry')).toBe(false);
+    });
+
+    it('should be false for every job once the bonus is banked', () => {
+      const b = board({
+        bonus: {
+          ...board().bonus,
+          earned_this_week: true,
+          daily_types_remaining: [
+            { id: 'clean_mirror', name: 'Clean bathroom mirror', price: 0.75 },
+          ],
+        },
+      });
+      expect(component.countsTowardBonus(b, 'clean_mirror')).toBe(false);
     });
   });
 
