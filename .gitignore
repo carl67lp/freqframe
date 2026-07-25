@@ -45,11 +45,19 @@ Thumbs.db
 
 .angular
 
+# Secrets — never commit. See .env.example for the expected keys.
+.env
+.env.*
+!.env.example
 apps/freqframe-api/.env.development
 apps/freqframe-api/.env.production
 apps/freqframe-api/src/app/config/calendars.development.yaml
 apps/freqframe-api/src/app/config/calendars.production.yaml
 apps/freqframe-ui/src/environments/environment.ts
 
+# TLS material for the nginx proxy — generated per host, not shared
+certs/
+
 # Data directory - database files
 data/
+*.db

@@ -46,11 +46,19 @@ cp apps/freqframe-api/src/app/config/calendars.example.yaml apps/freqframe-api/s
 
 Edit `calendars.local.yaml` with your calendar URLs (see CALDAV_SETUP.md for details).
 
-Create a `.env` file in the repo root:
+Create a `.env` file in the repo root — copy `.env.example` and fill it in:
+```bash
+cp .env.example .env
+```
+
 ```bash
 CALDAV_USERNAME=your-username
 CALDAV_PASSWORD=your-password
+API_KEY=<a strong random string>
 ```
+
+`API_KEY` is required. The API rejects every request when it is unset, and the
+value must match `apiKey` in `apps/freqframe-ui/src/environments/environment.prod.ts`.
 
 ### 3. Configure Pi-hole DNS
 
@@ -127,6 +135,19 @@ git pull origin alpha
 docker-compose build
 docker-compose up -d
 ```
+
+> **One-time note for existing deployments.** `.env` and `certs/` used to be
+> tracked in git by mistake and are now ignored. The first pull that brings in
+> that change will **delete both from the server**, and the stack will not come
+> back up without them. Back them up before pulling:
+>
+> ```bash
+> cp .env /tmp/freqframe-env.bak && cp -r certs /tmp/freqframe-certs.bak
+> ```
+>
+> Restore them afterwards, then rebuild. Because those files were public for a
+> time, treat the old CalDAV password, `API_KEY` and certificate as burned:
+> issue a new app password, generate a fresh `API_KEY`, and re-run `mkcert`.
 
 ## File Structure
 
