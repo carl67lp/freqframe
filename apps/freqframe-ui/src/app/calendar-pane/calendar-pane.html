@@ -1,0 +1,38 @@
+<div class="calendar-pane-content">
+  <div class="header">
+    <h2>Upcoming Events</h2>
+    @if (lastUpdated) {
+    <div class="last-updated">Updated: {{ lastUpdated | date : 'short' }}</div>
+    }
+  </div>
+
+  @if (groupedEvents$ | async; as groupedEvents) { @if (groupedEvents.length > 0) {
+  <div class="events-by-date">
+    @for (group of groupedEvents; track group.dateLabel) {
+    <div class="date-group">
+      <h3 class="date-label">{{ group.dateLabel }}</h3>
+      <ul class="events-list">
+        @for (event of group.events; track event.id) {
+        <li class="event-item" [ngClass]="'calendar-' + event.calendarName?.toLowerCase()">
+          <div class="event-content">
+            <div class="event-time">{{ event.start | date : 'short' }}</div>
+            <div class="event-title">{{ event.title }}</div>
+            @if (event.location) {
+            <div class="event-location">📍 {{ event.location }}</div>
+            }
+          </div>
+          @if (event.calendarName) {
+          <div class="calendar-initial">{{ event.calendarName.charAt(0).toUpperCase() }}</div>
+          }
+        </li>
+        }
+      </ul>
+    </div>
+    }
+  </div>
+  } @else {
+  <p class="no-events">No upcoming events</p>
+  } } @else {
+  <p class="loading">Loading events...</p>
+  }
+</div>

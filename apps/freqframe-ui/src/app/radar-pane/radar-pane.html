@@ -1,0 +1,16 @@
+<div class="radar-pane-content">
+  <div class="header">
+    <h2>Local Radar</h2>
+    @if (frameTime && !isLoading) {
+    <div class="frame-time">{{ frameTime | date : 'shortTime' }}</div>
+    }
+  </div>
+
+  @if (isLoading) {
+  <div class="status-message">Loading radar...</div>
+  } @else if (hasError) {
+  <div class="status-message error">Radar unavailable</div>
+  }
+
+  <div #mapContainer class="radar-map"></div>
+</div>

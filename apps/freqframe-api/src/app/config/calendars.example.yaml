@@ -1,0 +1,13 @@
+# Example calendar configuration
+# Copy this file to calendars.development.yaml or calendars.local.yaml
+# and fill in your actual calendar URLs and credentials
+
+calendars:
+  Home:
+    url: https://example.com/caldav/calendars/your-calendar-id/
+    description: "Your primary calendar"
+  
+  # Add more calendars as needed:
+  # Work:
+  #   url: https://example.com/caldav/calendars/work-calendar-id/
+  #   description: "Work calendar"
