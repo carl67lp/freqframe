@@ -1,0 +1,293 @@
+/* Cloud 9 store identity, adapted for the dark dashboard. Palette matches
+   cloud9-chore-tracker/app/static/style.css so the wall and her phone read as
+   the same product. Fonts are a local stack — the wall display should not need
+   the internet to render type. */
+:host {
+  --c9-navy: #1e3a5f;
+  --c9-navy-deep: #14283f;
+  --c9-yellow: #ffc72c;
+  --c9-red: #d64545;
+  --c9-paper: #faf7f0;
+  --c9-green: #4ade80;
+
+  --c9-display: 'Oswald', 'Haettenschweiler', 'Arial Narrow', sans-serif;
+  --c9-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  display: block;
+  height: 100%;
+}
+
+.chore-pane-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 0.6rem;
+  container-type: inline-size;
+}
+
+/* ---- Header: the store sign ---- */
+
+.c9-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--c9-navy);
+}
+
+.c9-mark {
+  font-family: var(--c9-display);
+  font-weight: 700;
+  font-size: 1.6rem;
+  letter-spacing: 1px;
+  margin: 0;
+  color: var(--c9-paper);
+  line-height: 1;
+}
+
+.c9-mark span {
+  color: var(--c9-yellow);
+}
+
+.c9-badge {
+  font-family: var(--c9-mono);
+  font-size: 0.68rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.75;
+  white-space: nowrap;
+}
+
+/* ---- Month total and pace ---- */
+
+.c9-total-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.c9-total {
+  font-family: var(--c9-display);
+  font-size: 2.6rem;
+  font-weight: 600;
+  color: var(--c9-yellow);
+  line-height: 1;
+}
+
+.c9-pace {
+  font-family: var(--c9-mono);
+  font-size: 0.8rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 3px;
+  white-space: nowrap;
+  border: 1px solid currentColor;
+}
+
+.pace-ahead,
+.pace-on_track {
+  color: var(--c9-green);
+}
+
+.pace-behind {
+  color: var(--c9-yellow);
+}
+
+.pace-no_goal {
+  color: var(--c9-paper);
+  opacity: 0.7;
+}
+
+.c9-goal-bar {
+  position: relative;
+  height: 10px;
+  background: var(--c9-navy-deep);
+  border: 1px solid var(--c9-navy);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.c9-goal-fill {
+  height: 100%;
+  background: var(--c9-yellow);
+  transition: width 0.4s ease;
+}
+
+/* Where a perfectly-paced month would sit right now. */
+.c9-goal-marker {
+  position: absolute;
+  top: -2px;
+  width: 2px;
+  height: 14px;
+  background: var(--c9-paper);
+  opacity: 0.85;
+  transition: left 0.4s ease;
+}
+
+.c9-goal-caption {
+  font-family: var(--c9-mono);
+  font-size: 0.72rem;
+  opacity: 0.7;
+  margin-top: -0.2rem;
+}
+
+/* ---- Outstanding weekly work ---- */
+
+.c9-section {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.c9-section-title {
+  font-family: var(--c9-display);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--c9-yellow);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.4rem;
+}
+
+.c9-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--c9-navy);
+}
+
+.c9-outstanding {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.c9-outstanding li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.28rem 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.c9-outstanding li:last-child {
+  border-bottom: none;
+}
+
+.c9-job-name {
+  font-size: 0.85rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The price tags from the phone board, punched hole and all. */
+.c9-price-tag {
+  position: relative;
+  background: var(--c9-red);
+  color: #fff;
+  font-family: var(--c9-mono);
+  font-weight: 600;
+  font-size: 0.72rem;
+  padding: 0.15rem 0.5rem 0.15rem 0.7rem;
+  border-radius: 3px;
+  border: 1px solid #a23434;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.c9-price-tag::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background: var(--c9-navy-deep);
+  border: 1px solid #a23434;
+  border-radius: 50%;
+}
+
+.c9-all-clear {
+  font-size: 0.85rem;
+  color: var(--c9-green);
+}
+
+/* ---- Employee of the Month ---- */
+
+.c9-bonus {
+  background: var(--c9-navy-deep);
+  border-left: 3px solid var(--c9-yellow);
+  border-radius: 3px;
+  padding: 0.5rem 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.c9-bonus.earned {
+  border-left-color: var(--c9-green);
+}
+
+.c9-bonus-label {
+  font-family: var(--c9-display);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--c9-yellow);
+}
+
+.c9-bonus.earned .c9-bonus-label {
+  color: var(--c9-green);
+}
+
+.c9-bonus-status {
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+/* ---- Footer ---- */
+
+.c9-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-family: var(--c9-mono);
+  font-size: 0.65rem;
+  opacity: 0.55;
+  letter-spacing: 0.5px;
+}
+
+.c9-stale {
+  color: var(--c9-red);
+  opacity: 0.9;
+}
+
+.c9-unavailable {
+  margin: auto 0;
+  opacity: 0.7;
+}
+
+/* The pane is roughly a quarter of a 1080p wall display; give it room to
+   breathe when it is wider than that. */
+@container (min-width: 480px) {
+  .c9-total {
+    font-size: 3.2rem;
+  }
+
+  .c9-job-name {
+    font-size: 0.92rem;
+  }
+}

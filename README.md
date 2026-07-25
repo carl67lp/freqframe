@@ -9,6 +9,8 @@ It is meant to run full-screen on an always-on display.
     plus today's and tomorrow's forecast.
 -   **Calendar**: CalDAV integration showing upcoming events across several
     calendars, grouped by day.
+-   **Chores**: A read-only view of the [Cloud 9 task board](https://github.com/carl67lp/cloud9-chore-tracker) —
+    month total against goal, pace, outstanding weekly jobs and bonus progress.
 -   **Radar**: Leaflet map with a RainViewer precipitation overlay. Built, but
     currently off the dashboard — reachable at `/radar`.
 
@@ -43,7 +45,8 @@ Both of these are gitignored and must be created locally:
 
 -   `.env` in the repo root — copy `.env.example` and fill in the CalDAV
     credentials and an `API_KEY`. The API rejects every request when `API_KEY`
-    is unset.
+    is unset. Set `CLOUD9_BASE_URL` to reach the Cloud 9 task board; leave it
+    unset and the chore pane simply reports itself unavailable.
 -   `apps/freqframe-ui/src/environments/environment.ts` — copy
     `environment.example.ts` and fill in the weather station ID, geocode,
     weather API key, and an `apiKey` matching the `API_KEY` above.
@@ -95,6 +98,11 @@ All endpoints require an `X-Api-Key` header matching `API_KEY`.
 -   `GET /api/calendars/events?name=&startDate=&endDate=` — events across all
     configured calendars, or one named calendar. Dates are ISO strings; events
     overlapping the window are returned, not only those starting inside it.
+-   `GET /api/chores` — the Cloud 9 task board's state, fetched server-side from
+    `CLOUD9_BASE_URL` and cached for 30s. Returns `{"unavailable": true, ...}`
+    when the board is unreachable and nothing has been cached, or the last good
+    response marked `"stale": true` when it has. It never returns zeroed
+    figures, which would render as a real month with nothing earned.
 
 ## Project Structure
 
@@ -104,6 +112,7 @@ freqframe/
 │   ├── freqframe-api/             # NestJS backend
 │   │   └── src/app/
 │   │       ├── calendars/         # Calendars controller
+│   │       ├── chores/            # Cloud 9 task board proxy + cache
 │   │       ├── config/            # Calendar YAML config loader
 │   │       ├── guards/            # API key guard
 │   │       └── services/calendar/ # CalDAV fetch and ICS expansion
@@ -112,6 +121,7 @@ freqframe/
 │           ├── dashboard/         # Grid layout
 │           ├── weather-pane/
 │           ├── calendar-pane/
+│           ├── chore-pane/        # Cloud 9 board, styled on-brand
 │           ├── radar-pane/        # Not on the dashboard; routed at /radar
 │           └── services/          # HTTP services
 ├── shared-types/                  # Shared TypeScript types

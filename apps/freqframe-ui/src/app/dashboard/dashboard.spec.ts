@@ -21,12 +21,13 @@ describe('Dashboard', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render the weather and calendar panes', () => {
+  it('should render the weather, calendar and chore panes', () => {
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
 
     expect(compiled.querySelector('app-weather-pane')).toBeTruthy();
     expect(compiled.querySelector('app-calendar-pane')).toBeTruthy();
+    expect(compiled.querySelector('app-chore-pane')).toBeTruthy();
   });
 
   it('should not render the radar pane', () => {

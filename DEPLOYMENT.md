@@ -60,6 +60,22 @@ API_KEY=<a strong random string>
 `API_KEY` is required. The API rejects every request when it is unset, and the
 value must match `apiKey` in `apps/freqframe-ui/src/environments/environment.prod.ts`.
 
+### 2b. Point the dashboard at the Cloud 9 chore board
+
+The chore pane reads the board through `freqframe-api`, which fetches it
+server-side. Add to `.env`:
+
+```bash
+CLOUD9_BASE_URL=http://<server-ip>:5000
+```
+
+The Cloud 9 stack publishes port 5000, so the LAN address works with no other
+changes. If you'd rather they talk over Docker rather than the LAN, put both
+stacks on a shared external network and use `http://cloud9-task-board:5000`.
+
+Leaving `CLOUD9_BASE_URL` unset is safe — the pane reports itself unavailable
+rather than showing an empty month.
+
 ### 3. Configure Pi-hole DNS
 
 In your Pi-hole dashboard:

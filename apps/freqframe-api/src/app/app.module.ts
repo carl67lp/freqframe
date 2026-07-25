@@ -6,6 +6,8 @@ import { ConfigModule } from '@nestjs/config';
 import { CalendarService } from './services/calendar/calendar.service';
 import calendarsConfig from './config/calendars.config';
 import { CaldavService } from './services/calendar/caldav';
+import { ChoresController } from './chores/chores.controller';
+import { ChoresService } from './chores/chores.service';
 
 @Module({
     imports: [
@@ -21,7 +23,7 @@ import { CaldavService } from './services/calendar/caldav';
             load: [calendarsConfig],
         }),
     ],
-    controllers: [AppController, CalendarsController],
-    providers: [AppService, CalendarService, CaldavService],
+    controllers: [AppController, CalendarsController, ChoresController],
+    providers: [AppService, CalendarService, CaldavService, ChoresService],
 })
 export class AppModule {}

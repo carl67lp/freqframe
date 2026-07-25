@@ -22,15 +22,15 @@
 }
 
 .weather-pane {
-  /* Spans both rows while the radar pane is off the dashboard. */
-  grid-area: 1/1/3/2;
+  grid-area: 1/1/2/2;
 }
 
-/* Retained for when the radar pane returns to the dashboard; pairing it with
-   .weather-pane { grid-area: 1/1/2/2 } restores the original two-up layout. */
-.radar-pane {
+.chore-pane {
   grid-area: 2/1/3/2;
-  padding: 0.75rem;
+  /* Cloud 9 store colours rather than the default card background, so the pane
+     reads as the same product as the board on her phone. */
+  background-color: #1e3a5f;
+  border-color: #14283f;
   overflow: hidden;
 }
 

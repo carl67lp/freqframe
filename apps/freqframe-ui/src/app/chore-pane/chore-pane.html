@@ -1,0 +1,68 @@
+<div class="chore-pane-content">
+  @if (board$ | async; as state) {
+
+  @if (isUnavailable(state)) {
+  <div class="c9-header">
+    <h1 class="c9-mark">CLOUD <span>9</span></h1>
+    <div class="c9-badge">TASK BOARD</div>
+  </div>
+  <p class="c9-unavailable">Task board unavailable.</p>
+  } @else {
+
+  @let board = asBoard(state);
+
+  <div class="c9-header">
+    <h1 class="c9-mark">CLOUD <span>9</span></h1>
+    <div class="c9-badge">{{ board.month.label }}</div>
+  </div>
+
+  <!-- Month total against goal -->
+  <div class="c9-total-row">
+    <div class="c9-total">{{ money(board.month.earned) }}</div>
+    <div class="c9-pace" [class]="'pace-' + board.month.status">
+      {{ paceHeadline(board.month) }}
+    </div>
+  </div>
+
+  @if (board.month.goal !== null) {
+  <div class="c9-goal-bar">
+    <div class="c9-goal-fill" [style.width.%]="fillPercent(board.month)"></div>
+    <div class="c9-goal-marker" [style.left.%]="markerPercent(board.month)"></div>
+  </div>
+  }
+  <div class="c9-goal-caption">{{ goalCaption(board.month) }}</div>
+
+  <!-- What's still open, where the real money is -->
+  <div class="c9-section">
+    <div class="c9-section-title">Weekly Overtime</div>
+    @if (board.week.weekly_outstanding.length === 0) {
+    <div class="c9-all-clear">All weekly jobs done ✓</div>
+    } @else {
+    <ul class="c9-outstanding">
+      @for (job of board.week.weekly_outstanding; track job.id) {
+      <li>
+        <span class="c9-job-name">{{ job.name }}</span>
+        <span class="c9-price-tag">{{ money(job.price) }}</span>
+      </li>
+      }
+    </ul>
+    }
+  </div>
+
+  <!-- Employee of the Month -->
+  <div class="c9-bonus" [class.earned]="board.bonus.earned_this_week">
+    <span class="c9-bonus-label">Employee of the Month</span>
+    <span class="c9-bonus-status">{{ bonusCaption(board.bonus) }}</span>
+  </div>
+
+  <div class="c9-footer">
+    <span>Last logged: {{ lastActivityLabel(board.last_activity) }}</span>
+    @if (isStale(state)) {
+    <span class="c9-stale">board offline — last known</span>
+    }
+  </div>
+
+  } } @else {
+  <p class="c9-unavailable">Loading task board…</p>
+  }
+</div>

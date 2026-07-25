@@ -10,6 +10,8 @@ services:
             CALDAV_USERNAME: ${CALDAV_USERNAME}
             CALDAV_PASSWORD: ${CALDAV_PASSWORD}
             API_KEY: ${API_KEY}
+            # Cloud 9 chore board, read server-side for the dashboard pane.
+            CLOUD9_BASE_URL: ${CLOUD9_BASE_URL:-}
         volumes:
             # Mount your production calendars config
             - ./apps/freqframe-api/src/app/config/calendars.production.yaml:/app/config/calendars.production.yaml:ro
