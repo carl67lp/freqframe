@@ -20,4 +20,21 @@ describe('Dashboard', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should render the weather and calendar panes', () => {
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(compiled.querySelector('app-weather-pane')).toBeTruthy();
+    expect(compiled.querySelector('app-calendar-pane')).toBeTruthy();
+  });
+
+  it('should not render the radar pane', () => {
+    // The radar component is retained and still routed at /radar, but it is
+    // deliberately off the dashboard.
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(compiled.querySelector('app-radar-pane')).toBeNull();
+  });
 });
